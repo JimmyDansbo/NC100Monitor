@@ -286,8 +286,15 @@ figure_op:
 ; *****************************************************************************
 
 inc_r:
+	PRINT_STR op3
 	PRINT_STR wrd_inc
-	
+	pop	HL
+	ld	A,(HL)
+	srl	A
+	srl	A
+	srl	A
+	call	reg8_to_char
+	call	char_out
 	ret
 
 cp_iydp:
