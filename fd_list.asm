@@ -8,7 +8,7 @@ fd_list:
 	defw	op_nop		; $06
 	defw	op_nop		; $07
 	defw	op_nop		; $08
-	defw	op_nop		; $09
+	defw	add_iy_rr	; $09
 	defw	op_nop		; $0A
 	defw	op_nop		; $0B
 	defw	op_nop		; $0C
@@ -24,7 +24,7 @@ fd_list:
 	defw	op_nop		; $16
 	defw	op_nop		; $17
 	defw	op_nop		; $18
-	defw	op_nop		; $19
+	defw	add_iy_rr	; $19
 	defw	op_nop		; $1A
 	defw	op_nop		; $1B
 	defw	op_nop		; $1C
@@ -34,15 +34,15 @@ fd_list:
 	defw	op_nop		; $20
 	defw	ld_iy_nn	; $21
 	defw	ld_nnp_iy	; $22
-	defw	op_nop		; $23
+	defw	inc_iy		; $23
 	defw	op_nop		; $24
 	defw	op_nop		; $25
 	defw	op_nop		; $26
 	defw	op_nop		; $27
 	defw	op_nop		; $28
-	defw	op_nop		; $29
+	defw	add_iy_rr	; $29
 	defw	ld_iy_nnp	; $2A
-	defw	op_nop		; $2B
+	defw	dec_iy		; $2B
 	defw	op_nop		; $2C
 	defw	op_nop		; $2D
 	defw	op_nop		; $2E
@@ -56,7 +56,7 @@ fd_list:
 	defw	ld_iydp_n	; $36
 	defw	op_nop		; $37
 	defw	op_nop		; $38
-	defw	op_nop		; $39
+	defw	add_iy_rr	; $39
 	defw	op_nop		; $3A
 	defw	op_nop		; $3B
 	defw	op_nop		; $3C
@@ -202,7 +202,7 @@ fd_list:
 	defw	op_nop		; $C8
 	defw	op_nop		; $C9
 	defw	op_nop		; $CA
-	defw	op_nop		; $CB
+	defw	ras_fdcb	; $CB
 	defw	op_nop		; $CC
 	defw	op_nop		; $CD
 	defw	op_nop		; $CE
@@ -255,3 +255,70 @@ fd_list:
 	defw	op_nop		; $FD
 	defw	op_nop		; $FE
 	defw	op_nop		; $FF
+
+ras_fdcb:
+	inc	HL
+	inc	HL
+	ld	A,(HL)
+	cp	$06
+	jp	Z,rlc_iydp
+	cp	$16
+	jp	Z,rl_iydp
+	cp	$0E
+	jp	Z,rrc_iydp
+	cp	$1E
+	jp	Z,rr_iydp
+	cp	$26
+	jp	Z,sla_iydp
+	cp	$2E
+	jp	Z,sra_iydp
+	cp	$3E
+	jp	Z,srl_iydp
+	cp	$46
+	jp	Z,bit_b_iydp
+	cp	$4E
+	jp	Z,bit_b_iydp
+	cp	$56
+	jp	Z,bit_b_iydp
+	cp	$5E
+	jp	Z,bit_b_iydp
+	cp	$66
+	jp	Z,bit_b_iydp
+	cp	$6E
+	jp	Z,bit_b_iydp
+	cp	$76
+	jp	Z,bit_b_iydp
+	cp	$7E
+	jp	Z,bit_b_iydp
+	cp	$C6
+	jp	Z,set_b_iydp
+	cp	$CE
+	jp	Z,set_b_iydp
+	cp	$D6
+	jp	Z,set_b_iydp
+	cp	$DE
+	jp	Z,set_b_iydp
+	cp	$E6
+	jp	Z,set_b_iydp
+	cp	$EE
+	jp	Z,set_b_iydp
+	cp	$F6
+	jp	Z,set_b_iydp
+	cp	$FE
+	jp	Z,set_b_iydp
+	cp	$86
+	jp	Z,res_b_iydp
+	cp	$8E
+	jp	Z,res_b_iydp
+	cp	$96
+	jp	Z,res_b_iydp
+	cp	$9E
+	jp	Z,res_b_iydp
+	cp	$A6
+	jp	Z,res_b_iydp
+	cp	$AE
+	jp	Z,res_b_iydp
+	cp	$B6
+	jp	Z,res_b_iydp
+	cp	$BE
+	jp	Z,res_b_iydp

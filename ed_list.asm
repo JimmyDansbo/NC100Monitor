@@ -65,7 +65,7 @@ ed_list:
 	defw	op_nop		; $3F
 	defw	op_nop		; $40
 	defw	op_nop		; $41
-	defw	op_nop		; $42
+	defw	sbc_hl_ss	; $42
 	defw	ld_nnp_dd	; $43
 	defw	op_neg		; $44
 	defw	op_nop		; $45
@@ -73,7 +73,7 @@ ed_list:
 	defw	ld_i_a		; $47
 	defw	op_nop		; $48
 	defw	op_nop		; $49
-	defw	op_nop		; $4A
+	defw	adc_hl_ss	; $4A
 	defw	ld_dd_nnp	; $4B
 	defw	op_nop		; $4C
 	defw	op_nop		; $4D
@@ -81,7 +81,7 @@ ed_list:
 	defw	ld_r_a		; $4F
 	defw	op_nop		; $50
 	defw	op_nop		; $51
-	defw	op_nop		; $52
+	defw	sbc_hl_ss	; $52
 	defw	ld_nnp_dd	; $53
 	defw	op_nop		; $54
 	defw	op_nop		; $55
@@ -89,7 +89,7 @@ ed_list:
 	defw	ld_a_i		; $57
 	defw	op_nop		; $58
 	defw	op_nop		; $59
-	defw	op_nop		; $5A
+	defw	adc_hl_ss	; $5A
 	defw	ld_dd_nnp	; $5B
 	defw	op_nop		; $5C
 	defw	op_nop		; $5D
@@ -97,23 +97,23 @@ ed_list:
 	defw	ld_a_r		; $5F
 	defw	op_nop		; $60
 	defw	op_nop		; $61
-	defw	op_nop		; $62
+	defw	sbc_hl_ss	; $62
 	defw	ld_nnp_dd	; $63
 	defw	op_nop		; $64
 	defw	op_nop		; $65
 	defw	op_nop		; $66
-	defw	op_nop		; $67
+	defw	op_rrd		; $67
 	defw	op_nop		; $68
 	defw	op_nop		; $69
-	defw	op_nop		; $6A
+	defw	adc_hl_ss	; $6A
 	defw	ld_dd_nnp	; $6B
 	defw	op_nop		; $6C
 	defw	op_nop		; $6D
 	defw	op_nop		; $6E
-	defw	op_nop		; $6F
+	defw	op_rld		; $6F
 	defw	op_nop		; $70
 	defw	op_nop		; $71
-	defw	op_nop		; $72
+	defw	sbc_hl_ss	; $72
 	defw	ld_nnp_dd	; $73
 	defw	op_nop		; $74
 	defw	op_nop		; $75
@@ -121,7 +121,7 @@ ed_list:
 	defw	op_nop		; $77
 	defw	op_nop		; $78
 	defw	op_nop		; $79
-	defw	op_nop		; $7A
+	defw	adc_hl_ss	; $7A
 	defw	ld_dd_nnp	; $7B
 	defw	op_nop		; $7C
 	defw	op_nop		; $7D

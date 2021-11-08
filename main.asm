@@ -9,19 +9,23 @@ mend
 	org	$6000
 main:	jp	main2
 ; !!!!!!! TESTING !!!!!!!!
-	dec	(ix+$42)
-	dec	(iy+$45)
-	daa
-	neg
-	ccf
-	scf
-	nop
-	halt
-	di
-	ei
-	im	0
-	im	1
-	im	2
+	bit 0,(hl)
+	bit 1,(hl)
+	bit 2,(hl)
+	bit 3,(hl)
+	bit 4,(hl)
+	bit 5,(hl)
+	bit 6,(hl)
+	bit 7,(hl)
+	bit 0,(iy+2)
+	bit 1,(iy+3)
+	bit 2,(iy+4)
+	bit 3,(iy+5)
+	bit 4,(iy+6)
+	bit 5,(iy+7)
+	bit 6,(iy+8)
+	bit 7,(iy+9)
+
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0
@@ -315,6 +319,7 @@ prog_name:
 	include	'dd_list.asm'
 	include 'fd_list.asm'
 	include 'ed_list.asm'
+	include 'cb_list.asm'
 
 test_word:	defw	0
 test_byte:	defb	0

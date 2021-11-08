@@ -1,4 +1,31 @@
 
+handle_cb:
+	pop	HL		; Remove Address of $DD from stack
+	ld	A,' '
+	call	char_out	; Print a space
+	inc	HL		; Go to next address and save it on stack
+	push	HL
+	ld	A,(HL)		; Print hex value
+	call	hexout
+	pop	HL
+	ld	A,(HL)
+	push	HL		; Save HL on stack
+
+	ld	BC,cb_list
+	ld	H,0
+	ld	L,A
+	add	HL,HL
+	add	HL,BC
+	ld	C,(HL)
+	inc	HL
+	ld	B,(HL)
+	push	BC
+	pop	IX
+	pop	HL
+	push	HL
+	jp	(IX)
+	ret
+
 handle_dd:
 	pop	HL		; Remove Address of $DD from stack
 	ld	A,' '
@@ -101,47 +128,47 @@ op_list:
 	defw	op_nop		; $00
 	defw	ld_dd_nn	; $01
 	defw	ld_bcp_a	; $02
-	defw	op_nop		; $03
+	defw	inc_ss		; $03
 	defw	inc_r		; $04
 	defw	dec_r		; $05
 	defw	ld_r_n		; $06
-	defw	op_nop		; $07
+	defw	op_rlca		; $07
 	defw	ex_af_af	; $08
-	defw	op_nop		; $09
+	defw	add_hl_ss	; $09
 	defw	ld_a_bcp	; $0A
-	defw	op_nop		; $0B
+	defw	dec_ss		; $0B
 	defw	inc_r		; $0C
 	defw	dec_r		; $0D
 	defw	ld_r_n		; $0E
-	defw	op_nop		; $0F
+	defw	op_rrca		; $0F
 	defw	op_nop		; $10
 	defw	ld_dd_nn	; $11
 	defw	ld_dep_a	; $12
-	defw	op_nop		; $13
+	defw	inc_ss		; $13
 	defw	inc_r		; $14
 	defw	dec_r		; $15
 	defw	ld_r_n		; $16
-	defw	op_nop		; $17
+	defw	op_rla		; $17
 	defw	op_nop		; $18
-	defw	op_nop		; $19
+	defw	add_hl_ss	; $19
 	defw	ld_a_dep	; $1A
-	defw	op_nop		; $1B
+	defw	dec_ss		; $1B
 	defw	inc_r		; $1C
 	defw	dec_r		; $1D
 	defw	ld_r_n		; $1E
-	defw	op_nop		; $1F
+	defw	op_rra		; $1F
 	defw	op_nop		; $20
 	defw	ld_dd_nn	; $21
 	defw	ld_nnp_hl	; $22
-	defw	op_nop		; $23
+	defw	inc_ss		; $23
 	defw	inc_r		; $24
 	defw	dec_r		; $25
 	defw	ld_r_n		; $26
 	defw	op_daa		; $27
 	defw	op_nop		; $28
-	defw	op_nop		; $29
+	defw	add_hl_ss	; $29
 	defw	ld_hl_nnp	; $2A
-	defw	op_nop		; $2B
+	defw	dec_ss		; $2B
 	defw	inc_r		; $2C
 	defw	dec_r		; $2D
 	defw	ld_r_n		; $2E
@@ -149,15 +176,15 @@ op_list:
 	defw	op_nop		; $30
 	defw	ld_dd_nn	; $31
 	defw	ld_nnp_a	; $32
-	defw	op_nop		; $33
+	defw	inc_ss		; $33
 	defw	inc_hlp		; $34
 	defw	dec_hlp		; $35
 	defw	ld_hlp_n	; $36
 	defw	op_scf		; $37
 	defw	op_nop		; $38
-	defw	op_nop		; $39
+	defw	add_hl_ss	; $39
 	defw	ld_a_nnp	; $3A
-	defw	op_nop		; $3B
+	defw	dec_ss		; $3B
 	defw	inc_r		; $3C
 	defw	dec_r		; $3D
 	defw	ld_r_n		; $3E
@@ -301,7 +328,7 @@ op_list:
 	defw	op_nop		; $C8
 	defw	op_nop		; $C9
 	defw	op_nop		; $CA
-	defw	op_nop		; $CB
+	defw	handle_cb	; $CB
 	defw	op_nop		; $CC
 	defw	op_nop		; $CD
 	defw	adc_a_n		; $CE
@@ -355,6 +382,529 @@ op_list:
 	defw	cp_n		; $FE
 	defw	op_nop		; $FF
 
+res_b_iydp:
+	ld	IX,wrd_res
+	jp	srt_b_iydp
+res_b_ixdp:
+	ld	IX,wrd_res
+	jp	srt_b_ixdp
+res_b_hlp:
+	ld	IX,wrd_res
+	jp	srt_b_hlp
+res_b_r:
+	ld	IX,wrd_res
+	jp	srt_b_r
+set_b_iydp:
+	ld	IX,wrd_set
+	jp	srt_b_iydp
+set_b_ixdp:
+	ld	IX,wrd_set
+	jp	srt_b_ixdp
+set_b_hlp:
+	ld	IX,wrd_set
+	jp	srt_b_hlp
+set_b_r:
+	ld	IX,wrd_set
+	jp	srt_b_r
+bit_b_iydp:
+	ld	IX,wrd_bit
+	jp	srt_b_iydp
+bit_b_ixdp:
+	ld	IX,wrd_bit
+	jp	srt_b_ixdp
+bit_b_hlp:
+	ld	IX,wrd_bit
+	jp	srt_b_hlp
+bit_b_r:
+	ld	IX,wrd_bit
+	jp	srt_b_r
+
+srt_b_iydp:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	pop	HL			;CB
+	inc	HL			;d
+	push	HL
+	inc	HL			;b
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	call	char_out
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	inc	HL
+	ld	A,(HL)
+	and	%00111000
+	srl	A
+	srl	A
+	srl	A
+	or	%00110000
+	call	char_out
+	call	commaspc
+	PRINT_STR reg_iyp
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,')'
+	call	char_out
+	pop	HL
+	inc	HL
+	ret
+
+srt_b_ixdp:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	pop	HL			;CB
+	inc	HL			;d
+	push	HL
+	inc	HL			;b
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	call	char_out
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	inc	HL
+	ld	A,(HL)
+	and	%00111000
+	srl	A
+	srl	A
+	srl	A
+	or	%00110000
+	call	char_out
+	call	commaspc
+	PRINT_STR reg_ixp
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,')'
+	call	char_out
+	pop	HL
+	inc	HL
+	ret
+
+srt_b_hlp:
+	PRINT_STR op2
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00111000
+	srl	A
+	srl	A
+	srl	A
+	or	%00110000
+	call	char_out
+	call	commaspc
+	PRINT_STR reg_hlp
+	pop	HL
+	ret
+
+srt_b_r:
+	PRINT_STR op2
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00111000
+	srl	A
+	srl	A
+	srl	A
+	or	%00110000
+	call	char_out
+	call	commaspc
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00000111
+	call	reg8_to_char
+	call	char_out
+	pop	HL
+	ret
+
+op_rrd:
+	PRINT_STR op2
+	PRINT_STR wrd_rrd
+	pop	HL
+	ret
+
+op_rld:
+	PRINT_STR op2
+	PRINT_STR wrd_rld
+	pop	HL
+	ret
+
+srl_iydp:
+	ld	IX,wrd_srl
+	jp	ras_iydp
+srl_ixdp:
+	ld	IX,wrd_srl
+	jp	ras_ixdp
+srl_hlp:
+	ld	IX,wrd_srl
+	jp	ras_hlp
+srl_r:
+	ld	IX,wrd_srl
+	jp	ras_r
+sra_iydp:
+	ld	IX,wrd_sra
+	jp	ras_iydp
+sra_ixdp:
+	ld	IX,wrd_sra
+	jp	ras_ixdp
+sra_hlp:
+	ld	IX,wrd_sra
+	jp	ras_hlp
+sra_r:
+	ld	IX,wrd_sra
+	jp	ras_r
+sla_iydp:
+	ld	IX,wrd_sla
+	jp	ras_iydp
+sla_ixdp:
+	ld	IX,wrd_sla
+	jp	ras_ixdp
+sla_hlp:
+	ld	IX,wrd_sla
+	jp	ras_hlp
+sla_r:
+	ld	IX,wrd_sla
+	jp	ras_r
+rr_iydp:
+	ld	IX,wrd_rr
+	jp	ras_iydp
+rr_ixdp:
+	ld	IX,wrd_rr
+	jp	ras_ixdp
+rr_hlp:
+	ld	IX,wrd_rr
+	jp	ras_hlp
+rr_r:
+	ld	IX,wrd_rr
+	jp	ras_r
+rrc_iydp:
+	ld	IX,wrd_rrc
+	jp	ras_iydp
+rrc_ixdp:
+	ld	IX,wrd_rrc
+	jp	ras_ixdp
+rrc_hlp:
+	ld	IX,wrd_rrc
+	jp	ras_hlp
+rrc_r:
+	ld	IX,wrd_rrc
+	jp	ras_r
+rl_iydp:
+	ld	IX,wrd_rl
+	jp	ras_iydp
+rl_ixdp:
+	ld	IX,wrd_rl
+	jp	ras_ixdp
+rl_hlp:
+	ld	IX,wrd_rl
+	jp	ras_hlp
+rl_r:
+	ld	IX,wrd_rl
+	jp	ras_r
+rlc_iydp:
+	ld	IX,wrd_rlc
+	jp	ras_iydp
+rlc_ixdp:
+	ld	IX,wrd_rlc
+	jp	ras_ixdp
+rlc_hlp:
+	ld	IX,wrd_rlc
+	jp	ras_hlp
+rlc_r:
+	ld	IX,wrd_rlc
+	jp	ras_r
+
+ras_iydp:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	pop	HL
+	inc	HL
+	push	HL
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	call	char_out
+	push	IX
+	pop	HL
+	call	write_str
+	PRINT_STR reg_iyp
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,')'
+	call	char_out
+	pop	HL
+	inc	HL		; Skip last $06
+	ret
+
+ras_ixdp:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	pop	HL
+	inc	HL
+	push	HL
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	call	char_out
+	push	IX
+	pop	HL
+	call	write_str
+	PRINT_STR reg_ixp
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,')'
+	call	char_out
+	pop	HL
+	inc	HL		; Skip last $06
+	ret
+
+ras_hlp:
+	PRINT_STR op2
+	push	IX
+	pop	HL
+	call	write_str
+	PRINT_STR reg_hlp
+	pop	HL
+	ret
+
+ras_r:
+	PRINT_STR op2
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00000111
+	call	reg8_to_char
+	call	char_out
+	pop	HL
+	ret
+
+op_rra:
+	PRINT_STR op3
+	PRINT_STR wrd_rra
+	pop	HL
+	ret
+
+op_rrca:
+	PRINT_STR op3
+	PRINT_STR wrd_rrca
+	pop	HL
+	ret
+
+op_rla:
+	PRINT_STR op3
+	PRINT_STR wrd_rla
+	pop	HL
+	ret
+
+op_rlca:
+	PRINT_STR op3
+	PRINT_STR wrd_rlca
+	pop	HL
+	ret
+
+dec_iy:
+	ld	BC,wrd_dec
+	jp	id_iy
+dec_ix:
+	ld	BC,wrd_dec
+	jp	id_ix
+dec_ss:
+	ld	BC,wrd_dec
+	jp	id_ss
+inc_iy:
+	ld	BC,wrd_inc
+	jp	id_iy
+inc_ix:
+	ld	BC,wrd_inc
+	jp	id_ix
+inc_ss:
+	ld	BC,wrd_inc
+	jp	id_ss
+
+id_iy:
+	PRINT_STR op2
+	ld	HL,BC
+	call	write_str
+	PRINT_STR reg_iy
+	pop	HL
+	ret
+
+id_ix:
+	PRINT_STR op2
+	ld	HL,BC
+	call	write_str
+	PRINT_STR reg_ix
+	pop	HL
+	ret
+
+id_ss:
+	PRINT_STR op3
+	ld	HL,BC
+	call	write_str
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00110000
+	srl	A
+	srl	A
+	srl	A
+	srl	A
+	ld	B,A
+	sla	A
+	add	A,B
+	ld	BC,reg_16_list
+	ld	H,0
+	ld	L,A
+	add	HL,BC
+	call	write_str
+	pop	HL
+	ret
+
+add_iy_rr:
+	PRINT_STR op2
+	PRINT_STR wrd_add
+	PRINT_STR reg_iy
+	call	commaspc
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00110000
+	cp	%00000000
+	jr	Z,.do_bc
+	cp	%00010000
+	jr	Z,.do_de
+	cp	%00100000
+	jr	Z,.do_iy
+	ld	HL,reg_sp
+	jr	.write
+.do_bc:
+	ld	HL,reg_bc
+	jr	.write
+.do_de:
+	ld	HL,reg_de
+	jr	.write
+.do_iy:
+	ld	HL,reg_iy
+.write:
+	call	write_str
+	pop	HL
+	ret
+
+add_ix_pp:
+	PRINT_STR op2
+	PRINT_STR wrd_add
+	PRINT_STR reg_ix
+	call	commaspc
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00110000
+	cp	%00000000
+	jr	Z,.do_bc
+	cp	%00010000
+	jr	Z,.do_de
+	cp	%00100000
+	jr	Z,.do_ix
+	ld	HL,reg_sp
+	jr	.write
+.do_bc:
+	ld	HL,reg_bc
+	jr	.write
+.do_de:
+	ld	HL,reg_de
+	jr	.write
+.do_ix:
+	ld	HL,reg_ix
+.write:
+	call	write_str
+	pop	HL
+	ret
+
+sbc_hl_ss:
+	ld	HL,op2
+	ld	BC,wrd_sbc
+	jp	adx_hl_ss
+adc_hl_ss:
+	ld	HL,op2
+	ld	BC,wrd_adc
+	jp	adx_hl_ss
+add_hl_ss:
+	ld	HL,op3
+	ld	BC,wrd_add
+adx_hl_ss:
+	call	write_str
+	ld	HL,BC
+	call	write_str
+	PRINT_STR reg_hl
+	call	commaspc
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00110000
+	srl	A
+	srl	A
+	srl	A
+	srl	A
+	ld	B,A
+	sla	A
+	add	A,B
+	ld	BC,reg_16_list
+	ld	H,0
+	ld	L,A
+	add	HL,BC
+	call	write_str
+	pop	HL
+	ret
 op_im2:
 	ld	B,'2'
 	jp	op_im
