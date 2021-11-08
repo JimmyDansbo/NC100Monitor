@@ -66,39 +66,39 @@ ed_list:
 	defw	op_nop		; $40
 	defw	op_nop		; $41
 	defw	op_nop		; $42
-	defw	op_nop		; $43
-	defw	op_nop		; $44
+	defw	ld_nnp_dd	; $43
+	defw	op_neg		; $44
 	defw	op_nop		; $45
-	defw	op_nop		; $46
-	defw	op_nop		; $47
+	defw	op_im0		; $46
+	defw	ld_i_a		; $47
 	defw	op_nop		; $48
 	defw	op_nop		; $49
 	defw	op_nop		; $4A
-	defw	op_nop		; $4B
+	defw	ld_dd_nnp	; $4B
 	defw	op_nop		; $4C
 	defw	op_nop		; $4D
 	defw	op_nop		; $4E
-	defw	op_nop		; $4F
+	defw	ld_r_a		; $4F
 	defw	op_nop		; $50
 	defw	op_nop		; $51
 	defw	op_nop		; $52
-	defw	op_nop		; $53
+	defw	ld_nnp_dd	; $53
 	defw	op_nop		; $54
 	defw	op_nop		; $55
-	defw	op_nop		; $56
-	defw	op_nop		; $57
+	defw	op_im1		; $56
+	defw	ld_a_i		; $57
 	defw	op_nop		; $58
 	defw	op_nop		; $59
 	defw	op_nop		; $5A
-	defw	op_nop		; $5B
+	defw	ld_dd_nnp	; $5B
 	defw	op_nop		; $5C
 	defw	op_nop		; $5D
-	defw	op_nop		; $5E
-	defw	op_nop		; $5F
+	defw	op_im2		; $5E
+	defw	ld_a_r		; $5F
 	defw	op_nop		; $60
 	defw	op_nop		; $61
 	defw	op_nop		; $62
-	defw	op_nop		; $63
+	defw	ld_nnp_dd	; $63
 	defw	op_nop		; $64
 	defw	op_nop		; $65
 	defw	op_nop		; $66
@@ -106,7 +106,7 @@ ed_list:
 	defw	op_nop		; $68
 	defw	op_nop		; $69
 	defw	op_nop		; $6A
-	defw	op_nop		; $6B
+	defw	ld_dd_nnp	; $6B
 	defw	op_nop		; $6C
 	defw	op_nop		; $6D
 	defw	op_nop		; $6E
@@ -114,7 +114,7 @@ ed_list:
 	defw	op_nop		; $70
 	defw	op_nop		; $71
 	defw	op_nop		; $72
-	defw	op_nop		; $73
+	defw	ld_nnp_dd	; $73
 	defw	op_nop		; $74
 	defw	op_nop		; $75
 	defw	op_nop		; $76
@@ -122,7 +122,7 @@ ed_list:
 	defw	op_nop		; $78
 	defw	op_nop		; $79
 	defw	op_nop		; $7A
-	defw	op_nop		; $7B
+	defw	ld_dd_nnp	; $7B
 	defw	op_nop		; $7C
 	defw	op_nop		; $7D
 	defw	op_nop		; $7E
@@ -159,32 +159,32 @@ ed_list:
 	defw	op_nop		; $9D
 	defw	op_nop		; $9E
 	defw	op_nop		; $9F
-	defw	op_nop		; $A0
-	defw	op_nop		; $A1
+	defw	op_ldi		; $A0
+	defw	op_cpi		; $A1
 	defw	op_nop		; $A2
 	defw	op_nop		; $A3
 	defw	op_nop		; $A4
 	defw	op_nop		; $A5
 	defw	op_nop		; $A6
 	defw	op_nop		; $A7
-	defw	op_nop		; $A8
-	defw	op_nop		; $A9
+	defw	op_ldd		; $A8
+	defw	op_cpd		; $A9
 	defw	op_nop		; $AA
 	defw	op_nop		; $AB
 	defw	op_nop		; $AC
 	defw	op_nop		; $AD
 	defw	op_nop		; $AE
 	defw	op_nop		; $AF
-	defw	op_nop		; $B0
-	defw	op_nop		; $B1
+	defw	op_ldir		; $B0
+	defw	op_cpir		; $B1
 	defw	op_nop		; $B2
 	defw	op_nop		; $B3
 	defw	op_nop		; $B4
 	defw	op_nop		; $B5
 	defw	op_nop		; $B6
 	defw	op_nop		; $B7
-	defw	op_nop		; $B8
-	defw	op_nop		; $B9
+	defw	op_lddr		; $B8
+	defw	op_cpdr		; $B9
 	defw	op_nop		; $BA
 	defw	op_nop		; $BB
 	defw	op_nop		; $BC

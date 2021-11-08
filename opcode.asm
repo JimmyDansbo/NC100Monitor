@@ -23,116 +23,61 @@ handle_dd:
 	pop	IX
 	pop	HL
 	push	HL
-	jp	(ix)
-
-
+	jp	(IX)
 	ret
 
 handle_fd:
-	pop	HL		; Remove Address of $FD from stack
+	pop	HL		; Remove Address of $DD from stack
 	ld	A,' '
 	call	char_out	; Print a space
 	inc	HL		; Go to next address and save it on stack
 	push	HL
 	ld	A,(HL)		; Print hex value
 	call	hexout
-	pop	HL		; Restore A and HL registers
+	pop	HL
 	ld	A,(HL)
 	push	HL		; Save HL on stack
-	ld	B,A		; Save A
 
-	cp	$21
-	jp	Z,ld_iy_nn
-	cp	$22
-	jp	Z,ld_nnp_iy
-	cp	$2A
-	jp	Z,ld_iy_nnp
-	cp	$36
-	jp	Z,ld_iydp_n
-	cp	$86
-	jp	Z,add_a_iydp
-	cp	$8E
-	jp	Z,adc_a_iydp
-	cp	$96
-	jp	Z,sub_iydp
-	cp	$9E
-	jp	Z,sbc_a_iydp
-	cp	$A6
-	jp	Z,and_iydp
-	cp	$AE
-	jp	Z,xor_iydp
-	cp	$B6
-	jp	Z,or_iydp
-	cp	$BE
-	jp	Z,cp_iydp
-	cp	$E1
-	jp	Z,pop_iy
-	cp	$E3
-	jp	Z,ex_spp_iy
-	cp	$E5
-	jp	Z,push_iy
-	cp	$F9
-	jp	Z,ld_sp_iy
-
-;	ld	A,B
-	and	%11111000
-	cp	%01110000
-	jp	Z,ld_iydp_r
-
-	ld	A,B
-	and	%11000111
-	cp	%01000110
-	jp	Z,ld_r_iydp
-
+	ld	BC,fd_list
+	ld	H,0
+	ld	L,A
+	add	HL,HL
+	add	HL,BC
+	ld	C,(HL)
+	inc	HL
+	ld	B,(HL)
+	push	BC
+	pop	IX
 	pop	HL
+	push	HL
+	jp	(IX)
 	ret
 
 handle_ed:
-	pop	HL		; Remove Address of $FD from stack
+	pop	HL		; Remove Address of $DD from stack
 	ld	A,' '
 	call	char_out	; Print a space
 	inc	HL		; Go to next address and save it on stack
 	push	HL
 	ld	A,(HL)		; Print hex value
 	call	hexout
-	pop	HL		; Restore A and HL registers
+	pop	HL
 	ld	A,(HL)
 	push	HL		; Save HL on stack
-	ld	B,A		; Save A
 
-	cp	$47
-	jp	Z,ld_i_a
-	cp	$4F
-	jp	Z,ld_r_a
-	cp	$57
-	jp	Z,ld_a_i
-	cp	$5F
-	jp	Z,ld_a_r
-	cp	$A0
-	jp	Z,op_ldi
-	cp	$A1
-	jp	Z,op_cpi
-	cp	$A8
-	jp	Z,op_ldd
-	cp	$A9
-	jp	Z,op_cpd
-	cp	$B0
-	jp	Z,op_ldir
-	cp	$B1
-	jp	Z,op_cpir
-	cp	$B8
-	jp	Z,op_lddr
-	cp	$B9
-	jp	Z,op_cpdr
-
-;	LD	A,B
-	and	%11001111
-	cp	%01001011
-	jp	Z,ld_dd_nnp
-	cp	%01000011
-	jp	Z,ld_nnp_dd
-
+	ld	BC,ed_list
+	ld	H,0
+	ld	L,A
+	add	HL,HL
+	add	HL,BC
+	ld	C,(HL)
+	inc	HL
+	ld	B,(HL)
+	push	BC
+	pop	IX
 	pop	HL
+	push	HL
+	jp	(IX)
 	ret
 
 figure_op:
@@ -154,69 +99,69 @@ figure_op:
 
 op_list:
 	defw	op_nop		; $00
-	defw	op_nop		; $01
-	defw	op_nop		; $02
+	defw	ld_dd_nn	; $01
+	defw	ld_bcp_a	; $02
 	defw	op_nop		; $03
-	defw	op_nop		; $04
-	defw	op_nop		; $05
+	defw	inc_r		; $04
+	defw	dec_r		; $05
 	defw	ld_r_n		; $06
 	defw	op_nop		; $07
-	defw	op_nop		; $08
+	defw	ex_af_af	; $08
 	defw	op_nop		; $09
-	defw	op_nop		; $0A
+	defw	ld_a_bcp	; $0A
 	defw	op_nop		; $0B
-	defw	op_nop		; $0C
-	defw	op_nop		; $0D
+	defw	inc_r		; $0C
+	defw	dec_r		; $0D
 	defw	ld_r_n		; $0E
 	defw	op_nop		; $0F
 	defw	op_nop		; $10
-	defw	op_nop		; $11
-	defw	op_nop		; $12
+	defw	ld_dd_nn	; $11
+	defw	ld_dep_a	; $12
 	defw	op_nop		; $13
-	defw	op_nop		; $14
-	defw	op_nop		; $15
+	defw	inc_r		; $14
+	defw	dec_r		; $15
 	defw	ld_r_n		; $16
 	defw	op_nop		; $17
 	defw	op_nop		; $18
 	defw	op_nop		; $19
-	defw	op_nop		; $1A
+	defw	ld_a_dep	; $1A
 	defw	op_nop		; $1B
-	defw	op_nop		; $1C
-	defw	op_nop		; $1D
+	defw	inc_r		; $1C
+	defw	dec_r		; $1D
 	defw	ld_r_n		; $1E
 	defw	op_nop		; $1F
 	defw	op_nop		; $20
-	defw	op_nop		; $21
-	defw	op_nop		; $22
+	defw	ld_dd_nn	; $21
+	defw	ld_nnp_hl	; $22
 	defw	op_nop		; $23
-	defw	op_nop		; $24
-	defw	op_nop		; $25
+	defw	inc_r		; $24
+	defw	dec_r		; $25
 	defw	ld_r_n		; $26
-	defw	op_nop		; $27
+	defw	op_daa		; $27
 	defw	op_nop		; $28
 	defw	op_nop		; $29
-	defw	op_nop		; $2A
+	defw	ld_hl_nnp	; $2A
 	defw	op_nop		; $2B
-	defw	op_nop		; $2C
-	defw	op_nop		; $2D
+	defw	inc_r		; $2C
+	defw	dec_r		; $2D
 	defw	ld_r_n		; $2E
-	defw	op_nop		; $2F
+	defw	op_cpl		; $2F
 	defw	op_nop		; $30
-	defw	op_nop		; $31
-	defw	op_nop		; $32
+	defw	ld_dd_nn	; $31
+	defw	ld_nnp_a	; $32
 	defw	op_nop		; $33
-	defw	op_nop		; $34
-	defw	op_nop		; $35
-	defw	op_nop		; $36
-	defw	op_nop		; $37
+	defw	inc_hlp		; $34
+	defw	dec_hlp		; $35
+	defw	ld_hlp_n	; $36
+	defw	op_scf		; $37
 	defw	op_nop		; $38
 	defw	op_nop		; $39
-	defw	op_nop		; $3A
+	defw	ld_a_nnp	; $3A
 	defw	op_nop		; $3B
-	defw	op_nop		; $3C
-	defw	op_nop		; $3D
+	defw	inc_r		; $3C
+	defw	dec_r		; $3D
 	defw	ld_r_n		; $3E
-	defw	op_nop		; $3F
+	defw	op_ccf		; $3F
 	defw	ld_r_r		; $40
 	defw	ld_r_r		; $41
 	defw	ld_r_r		; $42
@@ -265,14 +210,14 @@ op_list:
 	defw	ld_r_r		; $6D
 	defw	ld_r_hlp	; $6E
 	defw	ld_r_r		; $6F
-	defw	ld_r_r		; $70
-	defw	ld_r_r		; $71
-	defw	ld_r_r		; $72
-	defw	ld_r_r		; $73
-	defw	ld_r_r		; $74
-	defw	ld_r_r		; $75
-	defw	ld_r_r		; $76
-	defw	ld_r_r		; $77
+	defw	ld_hlp_r	; $70
+	defw	ld_hlp_r	; $71
+	defw	ld_hlp_r	; $72
+	defw	ld_hlp_r	; $73
+	defw	ld_hlp_r	; $74
+	defw	ld_hlp_r	; $75
+	defw	op_halt		; $76
+	defw	ld_hlp_r	; $77
 	defw	ld_r_r		; $78
 	defw	ld_r_r		; $79
 	defw	ld_r_r		; $7A
@@ -281,77 +226,77 @@ op_list:
 	defw	ld_r_r		; $7D
 	defw	ld_r_hlp	; $7E
 	defw	ld_r_r		; $7F
-	defw	op_nop		; $80
-	defw	op_nop		; $81
-	defw	op_nop		; $82
-	defw	op_nop		; $83
-	defw	op_nop		; $84
-	defw	op_nop		; $85
-	defw	op_nop		; $86
-	defw	op_nop		; $87
-	defw	op_nop		; $88
-	defw	op_nop		; $89
-	defw	op_nop		; $8A
-	defw	op_nop		; $8B
-	defw	op_nop		; $8C
-	defw	op_nop		; $8D
-	defw	op_nop		; $8E
-	defw	op_nop		; $8F
-	defw	op_nop		; $90
-	defw	op_nop		; $91
-	defw	op_nop		; $92
-	defw	op_nop		; $93
-	defw	op_nop		; $94
-	defw	op_nop		; $95
-	defw	op_nop		; $96
-	defw	op_nop		; $97
-	defw	op_nop		; $98
-	defw	op_nop		; $99
-	defw	op_nop		; $9A
-	defw	op_nop		; $9B
-	defw	op_nop		; $9C
-	defw	op_nop		; $9D
-	defw	op_nop		; $9E
-	defw	op_nop		; $9F
-	defw	op_nop		; $A0
-	defw	op_nop		; $A1
-	defw	op_nop		; $A2
-	defw	op_nop		; $A3
-	defw	op_nop		; $A4
-	defw	op_nop		; $A5
-	defw	op_nop		; $A6
-	defw	op_nop		; $A7
-	defw	op_nop		; $A8
-	defw	op_nop		; $A9
-	defw	op_nop		; $AA
-	defw	op_nop		; $AB
-	defw	op_nop		; $AC
-	defw	op_nop		; $AD
-	defw	op_nop		; $AE
-	defw	op_nop		; $AF
-	defw	op_nop		; $B0
-	defw	op_nop		; $B1
-	defw	op_nop		; $B2
-	defw	op_nop		; $B3
-	defw	op_nop		; $B4
-	defw	op_nop		; $B5
-	defw	op_nop		; $B6
-	defw	op_nop		; $B7
-	defw	op_nop		; $B8
-	defw	op_nop		; $B9
-	defw	op_nop		; $BA
-	defw	op_nop		; $BB
-	defw	op_nop		; $BC
-	defw	op_nop		; $BD
-	defw	op_nop		; $BE
-	defw	op_nop		; $BF
+	defw	add_a_r		; $80
+	defw	add_a_r		; $81
+	defw	add_a_r		; $82
+	defw	add_a_r		; $83
+	defw	add_a_r		; $84
+	defw	add_a_r		; $85
+	defw	add_a_hlp	; $86
+	defw	add_a_r		; $87
+	defw	adc_a_r		; $88
+	defw	adc_a_r		; $89
+	defw	adc_a_r		; $8A
+	defw	adc_a_r		; $8B
+	defw	adc_a_r		; $8C
+	defw	adc_a_r		; $8D
+	defw	adc_a_hlp	; $8E
+	defw	adc_a_r		; $8F
+	defw	sub_r		; $90
+	defw	sub_r		; $91
+	defw	sub_r		; $92
+	defw	sub_r		; $93
+	defw	sub_r		; $94
+	defw	sub_r		; $95
+	defw	sub_hlp		; $96
+	defw	sub_r		; $97
+	defw	sbc_a_r		; $98
+	defw	sbc_a_r		; $99
+	defw	sbc_a_r		; $9A
+	defw	sbc_a_r		; $9B
+	defw	sbc_a_r		; $9C
+	defw	sbc_a_r		; $9D
+	defw	sbc_a_hlp	; $9E
+	defw	sbc_a_r		; $9F
+	defw	and_r		; $A0
+	defw	and_r		; $A1
+	defw	and_r		; $A2
+	defw	and_r		; $A3
+	defw	and_r		; $A4
+	defw	and_r		; $A5
+	defw	and_hlp		; $A6
+	defw	and_r		; $A7
+	defw	xor_r		; $A8
+	defw	xor_r		; $A9
+	defw	xor_r		; $AA
+	defw	xor_r		; $AB
+	defw	xor_r		; $AC
+	defw	xor_r		; $AD
+	defw	xor_hlp		; $AE
+	defw	xor_r		; $AF
+	defw	or_r		; $B0
+	defw	or_r		; $B1
+	defw	or_r		; $B2
+	defw	or_r		; $B3
+	defw	or_r		; $B4
+	defw	or_r		; $B5
+	defw	or_hlp		; $B6
+	defw	or_r		; $B7
+	defw	cp_r		; $B8
+	defw	cp_r		; $B9
+	defw	cp_r		; $BA
+	defw	cp_r		; $BB
+	defw	cp_r		; $BC
+	defw	cp_r		; $BD
+	defw	cp_hlp		; $BE
+	defw	cp_r		; $BF
 	defw	op_nop		; $C0
-	defw	op_nop		; $C1
+	defw	pop_qq		; $C1
 	defw	op_nop		; $C2
 	defw	op_nop		; $C3
 	defw	op_nop		; $C4
-	defw	op_nop		; $C5
-	defw	op_nop		; $C6
+	defw	push_qq		; $C5
+	defw	add_a_n		; $C6
 	defw	op_nop		; $C7
 	defw	op_nop		; $C8
 	defw	op_nop		; $C9
@@ -359,56 +304,90 @@ op_list:
 	defw	op_nop		; $CB
 	defw	op_nop		; $CC
 	defw	op_nop		; $CD
-	defw	op_nop		; $CE
+	defw	adc_a_n		; $CE
 	defw	op_nop		; $CF
 	defw	op_nop		; $D0
-	defw	op_nop		; $D1
+	defw	pop_qq		; $D1
 	defw	op_nop		; $D2
 	defw	op_nop		; $D3
 	defw	op_nop		; $D4
-	defw	op_nop		; $D5
-	defw	op_nop		; $D6
+	defw	push_qq		; $D5
+	defw	sub_n		; $D6
 	defw	op_nop		; $D7
 	defw	op_nop		; $D8
-	defw	op_nop		; $D9
+	defw	op_exx		; $D9
 	defw	op_nop		; $DA
 	defw	op_nop		; $DB
 	defw	op_nop		; $DC
 	defw	handle_dd	; $DD
-	defw	op_nop		; $DE
+	defw	sbc_a_hlp	; $DE
 	defw	op_nop		; $DF
 	defw	op_nop		; $E0
-	defw	op_nop		; $E1
+	defw	pop_qq		; $E1
 	defw	op_nop		; $E2
-	defw	op_nop		; $E3
+	defw	ex_spp_hl	; $E3
 	defw	op_nop		; $E4
-	defw	op_nop		; $E5
-	defw	op_nop		; $E6
+	defw	push_qq		; $E5
+	defw	and_n		; $E6
 	defw	op_nop		; $E7
 	defw	op_nop		; $E8
 	defw	op_nop		; $E9
 	defw	op_nop		; $EA
-	defw	op_nop		; $EB
+	defw	ex_de_hl	; $EB
 	defw	op_nop		; $EC
 	defw	handle_ed	; $ED
-	defw	op_nop		; $EE
+	defw	xor_n		; $EE
 	defw	op_nop		; $EF
 	defw	op_nop		; $F0
-	defw	op_nop		; $F1
+	defw	pop_qq		; $F1
 	defw	op_nop		; $F2
-	defw	op_nop		; $F3
+	defw	op_di		; $F3
 	defw	op_nop		; $F4
-	defw	op_nop		; $F5
-	defw	op_nop		; $F6
+	defw	push_qq		; $F5
+	defw	or_n		; $F6
 	defw	op_nop		; $F7
 	defw	op_nop		; $F8
-	defw	op_nop		; $F9
+	defw	ld_sp_hl	; $F9
 	defw	op_nop		; $FA
-	defw	op_nop		; $FB
+	defw	op_ei		; $FB
 	defw	op_nop		; $FC
 	defw	handle_fd	; $FD
-	defw	op_nop		; $FE
+	defw	cp_n		; $FE
 	defw	op_nop		; $FF
+
+op_im2:
+	ld	B,'2'
+	jp	op_im
+op_im1:
+	ld	B,'1'
+	jp	op_im
+op_im0:
+	ld	B,'0'
+op_im:
+	PRINT_STR op2
+	PRINT_STR wrd_im
+	ld	A,B
+	call	char_out
+	pop	HL
+	ret
+
+op_ei:
+	PRINT_STR op3
+	PRINT_STR wrd_ei
+	pop	HL
+	ret
+
+op_di:
+	PRINT_STR op3
+	PRINT_STR wrd_di
+	pop	HL
+	ret
+
+op_halt:
+	PRINT_STR op3
+	PRINT_STR wrd_halt
+	pop	HL
+	ret
 
 op_nop:
 	PRINT_STR op3
@@ -416,18 +395,60 @@ op_nop:
 	pop	HL
 	ret
 
-inc_r:
+op_scf:
 	PRINT_STR op3
-	PRINT_STR wrd_inc
+	PRINT_STR wrd_scf
 	pop	HL
-	ld	A,(HL)
-	srl	A
-	srl	A
-	srl	A
-	call	reg8_to_char
-	call	char_out
 	ret
 
+op_ccf:
+	PRINT_STR op3
+	PRINT_STR wrd_ccf
+	pop	HL
+	ret
+
+op_neg:
+	PRINT_STR op2
+	PRINT_STR wrd_neg
+	pop	HL
+	ret
+
+op_cpl:
+	PRINT_STR op3
+	PRINT_STR wrd_cpl
+	pop	HL
+	ret
+
+op_daa:
+	PRINT_STR op3
+	PRINT_STR wrd_daa
+	pop	HL
+	ret
+
+dec_iydp:
+	ld	BC,wrd_dec
+	jp	arl_iydp
+dec_ixdp:
+	ld	BC,wrd_dec
+	jp	arl_ixdp
+dec_hlp:
+	ld	BC,wrd_dec
+	jp	arl_hlp
+dec_r:
+	ld	BC,wrd_dec
+	jp	ind_r
+inc_iydp:
+	ld	BC,wrd_inc
+	jp	arl_iydp
+inc_ixdp:
+	ld	BC,wrd_inc
+	jp	arl_ixdp
+inc_hlp:
+	ld	BC,wrd_inc
+	jp	arl_hlp
+inc_r:
+	ld	BC,wrd_inc
+	jp	ind_r
 cp_iydp:
 	ld	BC,wrd_cp
 	jp	arl_iydp
@@ -518,6 +539,22 @@ sub_n:
 sub_r:
 	ld	BC,wrd_sub
 	jp	arl_r
+
+ind_r:
+	PRINT_STR op3
+	ld	HL,BC
+	call	write_str
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00111111
+	srl	A
+	srl	A
+	srl	A
+	call	reg8_to_char
+	call	char_out
+	pop	HL
+	ret
 
 arl_iydp:
 	ld	A,' '

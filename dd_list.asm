@@ -32,8 +32,8 @@ dd_list:
 	defw	op_nop		; $1E
 	defw	op_nop		; $1F
 	defw	op_nop		; $20
-	defw	op_nop		; $21
-	defw	op_nop		; $22
+	defw	ld_ix_nn	; $21
+	defw	ld_nnp_ix	; $22
 	defw	op_nop		; $23
 	defw	op_nop		; $24
 	defw	op_nop		; $25
@@ -41,7 +41,7 @@ dd_list:
 	defw	op_nop		; $27
 	defw	op_nop		; $28
 	defw	op_nop		; $29
-	defw	op_nop		; $2A
+	defw	ld_ix_nnp	; $2A
 	defw	op_nop		; $2B
 	defw	op_nop		; $2C
 	defw	op_nop		; $2D
@@ -51,9 +51,9 @@ dd_list:
 	defw	op_nop		; $31
 	defw	op_nop		; $32
 	defw	op_nop		; $33
-	defw	op_nop		; $34
-	defw	op_nop		; $35
-	defw	op_nop		; $36
+	defw	inc_ixdp	; $34
+	defw	dec_ixdp	; $35
+	defw	ld_ixdp_n	; $36
 	defw	op_nop		; $37
 	defw	op_nop		; $38
 	defw	op_nop		; $39
@@ -69,7 +69,7 @@ dd_list:
 	defw	op_nop		; $43
 	defw	op_nop		; $44
 	defw	op_nop		; $45
-	defw	op_nop		; $46
+	defw	ld_r_ixdp	; $46
 	defw	op_nop		; $47
 	defw	op_nop		; $48
 	defw	op_nop		; $49
@@ -77,7 +77,7 @@ dd_list:
 	defw	op_nop		; $4B
 	defw	op_nop		; $4C
 	defw	op_nop		; $4D
-	defw	op_nop		; $4E
+	defw	ld_r_ixdp	; $4E
 	defw	op_nop		; $4F
 	defw	op_nop		; $50
 	defw	op_nop		; $51
@@ -85,7 +85,7 @@ dd_list:
 	defw	op_nop		; $53
 	defw	op_nop		; $54
 	defw	op_nop		; $55
-	defw	op_nop		; $56
+	defw	ld_r_ixdp	; $56
 	defw	op_nop		; $57
 	defw	op_nop		; $58
 	defw	op_nop		; $59
@@ -93,7 +93,7 @@ dd_list:
 	defw	op_nop		; $5B
 	defw	op_nop		; $5C
 	defw	op_nop		; $5D
-	defw	op_nop		; $5E
+	defw	ld_r_ixdp	; $5E
 	defw	op_nop		; $5F
 	defw	op_nop		; $60
 	defw	op_nop		; $61
@@ -101,7 +101,7 @@ dd_list:
 	defw	op_nop		; $63
 	defw	op_nop		; $64
 	defw	op_nop		; $65
-	defw	op_nop		; $66
+	defw	ld_r_ixdp	; $66
 	defw	op_nop		; $67
 	defw	op_nop		; $68
 	defw	op_nop		; $69
@@ -109,23 +109,23 @@ dd_list:
 	defw	op_nop		; $6B
 	defw	op_nop		; $6C
 	defw	op_nop		; $6D
-	defw	op_nop		; $6E
+	defw	ld_r_ixdp	; $6E
 	defw	op_nop		; $6F
-	defw	op_nop		; $70
-	defw	op_nop		; $71
-	defw	op_nop		; $72
-	defw	op_nop		; $73
-	defw	op_nop		; $74
-	defw	op_nop		; $75
+	defw	ld_ixdp_r	; $70
+	defw	ld_ixdp_r	; $71
+	defw	ld_ixdp_r	; $72
+	defw	ld_ixdp_r	; $73
+	defw	ld_ixdp_r	; $74
+	defw	ld_ixdp_r	; $75
 	defw	op_nop		; $76
-	defw	op_nop		; $77
+	defw	ld_ixdp_r	; $77
 	defw	op_nop		; $78
 	defw	op_nop		; $79
 	defw	op_nop		; $7A
 	defw	op_nop		; $7B
 	defw	op_nop		; $7C
 	defw	op_nop		; $7D
-	defw	op_nop		; $7E
+	defw	ld_r_ixdp	; $7E
 	defw	op_nop		; $7F
 	defw	op_nop		; $80
 	defw	op_nop		; $81
@@ -133,7 +133,7 @@ dd_list:
 	defw	op_nop		; $83
 	defw	op_nop		; $84
 	defw	op_nop		; $85
-	defw	op_nop		; $86
+	defw	add_a_ixdp	; $86
 	defw	op_nop		; $87
 	defw	op_nop		; $88
 	defw	op_nop		; $89
@@ -141,7 +141,7 @@ dd_list:
 	defw	op_nop		; $8B
 	defw	op_nop		; $8C
 	defw	op_nop		; $8D
-	defw	op_nop		; $8E
+	defw	adc_a_ixdp	; $8E
 	defw	op_nop		; $8F
 	defw	op_nop		; $90
 	defw	op_nop		; $91
@@ -149,7 +149,7 @@ dd_list:
 	defw	op_nop		; $93
 	defw	op_nop		; $94
 	defw	op_nop		; $95
-	defw	op_nop		; $96
+	defw	sub_ixdp	; $96
 	defw	op_nop		; $97
 	defw	op_nop		; $98
 	defw	op_nop		; $99
@@ -157,7 +157,7 @@ dd_list:
 	defw	op_nop		; $9B
 	defw	op_nop		; $9C
 	defw	op_nop		; $9D
-	defw	op_nop		; $9E
+	defw	sbc_a_ixdp	; $9E
 	defw	op_nop		; $9F
 	defw	op_nop		; $A0
 	defw	op_nop		; $A1
@@ -165,7 +165,7 @@ dd_list:
 	defw	op_nop		; $A3
 	defw	op_nop		; $A4
 	defw	op_nop		; $A5
-	defw	op_nop		; $A6
+	defw	and_ixdp	; $A6
 	defw	op_nop		; $A7
 	defw	op_nop		; $A8
 	defw	op_nop		; $A9
@@ -173,7 +173,7 @@ dd_list:
 	defw	op_nop		; $AB
 	defw	op_nop		; $AC
 	defw	op_nop		; $AD
-	defw	op_nop		; $AE
+	defw	xor_ixdp	; $AE
 	defw	op_nop		; $AF
 	defw	op_nop		; $B0
 	defw	op_nop		; $B1
@@ -181,7 +181,7 @@ dd_list:
 	defw	op_nop		; $B3
 	defw	op_nop		; $B4
 	defw	op_nop		; $B5
-	defw	op_nop		; $B6
+	defw	or_ixdp		; $B6
 	defw	op_nop		; $B7
 	defw	op_nop		; $B8
 	defw	op_nop		; $B9
@@ -189,7 +189,7 @@ dd_list:
 	defw	op_nop		; $BB
 	defw	op_nop		; $BC
 	defw	op_nop		; $BD
-	defw	op_nop		; $BE
+	defw	cp_ixdp		; $BE
 	defw	op_nop		; $BF
 	defw	op_nop		; $C0
 	defw	op_nop		; $C1
@@ -224,11 +224,11 @@ dd_list:
 	defw	op_nop		; $DE
 	defw	op_nop		; $DF
 	defw	op_nop		; $E0
-	defw	op_nop		; $E1
+	defw	pop_ix		; $E1
 	defw	op_nop		; $E2
-	defw	op_nop		; $E3
+	defw	ex_spp_ix	; $E3
 	defw	op_nop		; $E4
-	defw	op_nop		; $E5
+	defw	push_ix		; $E5
 	defw	op_nop		; $E6
 	defw	op_nop		; $E7
 	defw	op_nop		; $E8
@@ -248,7 +248,7 @@ dd_list:
 	defw	op_nop		; $F6
 	defw	op_nop		; $F7
 	defw	op_nop		; $F8
-	defw	op_nop		; $F9
+	defw	ld_sp_ix	; $F9
 	defw	op_nop		; $FA
 	defw	op_nop		; $FB
 	defw	op_nop		; $FC

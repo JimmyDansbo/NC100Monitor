@@ -9,6 +9,19 @@ mend
 	org	$6000
 main:	jp	main2
 ; !!!!!!! TESTING !!!!!!!!
+	dec	(ix+$42)
+	dec	(iy+$45)
+	daa
+	neg
+	ccf
+	scf
+	nop
+	halt
+	di
+	ei
+	im	0
+	im	1
+	im	2
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0
