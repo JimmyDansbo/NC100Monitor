@@ -9,24 +9,6 @@ mend
 	org	$6000
 main:	jp	main2
 ; !!!!!!! TESTING !!!!!!!!
-	cp	a
-	cp	b
-	cp	c
-	cp	d
-	cp	e
-	cp	h
-	cp	l
-	cp	$42
-	cp	(hl)
-	cp	(ix+$fe)
-	cp 	(iy+$af)
-	inc	a
-	inc	b
-	inc	c
-	inc	d
-	inc	e
-	inc	h
-	inc	l
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0
@@ -317,6 +299,9 @@ prog_name:
 	include 'nc100_ports.asm'
 	include	'kernwrap.asm'
 	include 'opcode.asm'
+	include	'dd_list.asm'
+	include 'fd_list.asm'
+	include 'ed_list.asm'
 
 test_word:	defw	0
 test_byte:	defb	0
