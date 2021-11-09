@@ -232,7 +232,7 @@ fd_list:
 	defw	op_nop		; $E6
 	defw	op_nop		; $E7
 	defw	op_nop		; $E8
-	defw	op_nop		; $E9
+	defw	jp_iyp		; $E9
 	defw	op_nop		; $EA
 	defw	op_nop		; $EB
 	defw	op_nop		; $EC

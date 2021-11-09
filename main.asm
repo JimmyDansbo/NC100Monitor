@@ -9,23 +9,13 @@ mend
 	org	$6000
 main:	jp	main2
 ; !!!!!!! TESTING !!!!!!!!
-	bit 0,(hl)
-	bit 1,(hl)
-	bit 2,(hl)
-	bit 3,(hl)
-	bit 4,(hl)
-	bit 5,(hl)
-	bit 6,(hl)
-	bit 7,(hl)
-	bit 0,(iy+2)
-	bit 1,(iy+3)
-	bit 2,(iy+4)
-	bit 3,(iy+5)
-	bit 4,(iy+6)
-	bit 5,(iy+7)
-	bit 6,(iy+8)
-	bit 7,(iy+9)
-	jp	input_loop
+	reti
+	retn
+	rst	$20
+	rst	$28
+	rst	$30
+	rst	$38
+	in	A,($33)
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0

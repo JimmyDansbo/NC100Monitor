@@ -68,7 +68,7 @@ ed_list:
 	defw	sbc_hl_ss	; $42
 	defw	ld_nnp_dd	; $43
 	defw	op_neg		; $44
-	defw	op_nop		; $45
+	defw	op_retn		; $45
 	defw	op_im0		; $46
 	defw	ld_i_a		; $47
 	defw	op_nop		; $48
@@ -76,7 +76,7 @@ ed_list:
 	defw	adc_hl_ss	; $4A
 	defw	ld_dd_nnp	; $4B
 	defw	op_nop		; $4C
-	defw	op_nop		; $4D
+	defw	op_reti		; $4D
 	defw	op_nop		; $4E
 	defw	ld_r_a		; $4F
 	defw	op_nop		; $50

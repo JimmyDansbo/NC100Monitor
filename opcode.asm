@@ -81,7 +81,7 @@ handle_fd:
 	ret
 
 handle_ed:
-	pop	HL		; Remove Address of $DD from stack
+	pop	HL		; Remove Address of $ED from stack
 	ld	A,' '
 	call	char_out	; Print a space
 	inc	HL		; Go to next address and save it on stack
@@ -123,7 +123,201 @@ figure_op:
 	jp	(ix)
 	ret
 
+in_a_np:
+	ld	A,' '
+	call	char_out
+	pop	HL
+	inc	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	print_str op2
+	print_str wrd_in
+	ld	A,'A'
+	call	char_out
+	call	commapar
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	ld	A,')'
+	call	char_out
+	pop	HL
+	ret
+
+rst_p:
+	print_str op3
+	print_str wrd_rst
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	and	%00111000
+	call	hexout
+	pop	HL
+	ret
+
+op_retn:
+	print_str op2
+	print_str wrd_retn
+	pop	HL
+	ret
+
+op_reti:
+	print_str op2
+	print_str wrd_reti
+	pop	HL
+	ret
+
+ret_cc:
+	print_str op3
+	print_str wrd_ret
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	cond_to_str
+	call	write_str
+	pop	HL
+	ret
+
+op_ret:
+	print_str op3
+	print_str wrd_ret
+	pop	HL
+	ret
+
+jp_iyp:
+	ld	IX,reg_iy
+	jr	jp_izp
+jp_ixp:
+	ld	IX,reg_ix
+jp_izp:
+	PRINT_STR op2
+	PRINT_STR wrd_jp
+	ld	A,'('
+	call	char_out
+	push	IX
+	pop	HL
+	call	write_str
+	ld	A,')'
+	call	char_out
+	pop	HL
+	ret
+
+jp_hlp:
+	PRINT_STR op3
+	PRINT_STR wrd_jp
+	PRINT_STR reg_hlp
+	pop	HL
+	ret
+djnz_e:
+	call	jr_cond
+	PRINT_STR wrd_djnz
+	jp	jr_end
+jr_nz_e:
+	call	jr_cond
+	PRINT_STR wrd_jr
+	PRINT_STR cond_nz
+	call	commaspc
+	jp	jr_end
+jr_z_e:
+	call	jr_cond
+	PRINT_STR wrd_jr
+	PRINT_STR cond_z
+	call	commaspc
+	jp	jr_end
+jr_nc_e:
+	call	jr_cond
+	PRINT_STR wrd_jr
+	PRINT_STR cond_nc
+	call	commaspc
+	jp	jr_end
+jr_c_e:
+	call	jr_cond
+	PRINT_STR wrd_jr
+	PRINT_STR cond_c
+	call	commaspc
+	jp	jr_end
+
+jr_cond:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	PRINT_STR op2
+	ret
+
+jr_e:
+	ld	A,' '
+	call	char_out
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	PRINT_STR op2
+	PRINT_STR wrd_jr
+jr_end:	pop	HL
+	inc	HL
+	push	HL
+	call	add_or_sub
+	push	HL
+	ld	A,H
+	call	hexout
+	pop	HL
+	ld	A,L
+	call	hexout
+	pop	HL
+	ret
+
+call_cc_nn:
+	ld	IX,wrd_call
+	jr	jc_cc_nn
+call_nn:
+	pop	HL
+	call	jc_start
+	push	HL
+	print_str wrd_call
+	pop	HL
+	push	HL
+	jp	jc_end
+jp_cc_nn:
+	ld	IX,wrd_jp
+jc_cc_nn:
+	pop	HL
+	call	jc_start
+	push	HL
+	push	IX
+	pop	HL
+	call	write_str
+	pop	HL
+	push	HL
+	dec	HL
+	ld	A,(HL)
+	call	cond_to_str
+	call	write_str
+	call	commaspc
+	pop	HL
+	push	HL
+	jp	jc_end
 jp_nn:
+	pop	HL
+	call	jc_start
+	push	HL
+	PRINT_STR wrd_jp
+	pop	HL
+	push	HL
+jc_end:
+	inc	HL
+	ld	A,(HL)
+	call	hexout
+	pop	HL
+	push	HL
+	ld	A,(HL)
+	call	hexout
+	pop	HL
+	inc	HL
+	ret
+jc_start:
+	push	HL
 	ld	A,' '
 	call	char_out
 	pop	HL
@@ -139,18 +333,7 @@ jp_nn:
 	ld	A,(HL)
 	call	hexout
 	PRINT_STR op1
-	PRINT_STR wrd_jp
 	pop	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	inc	HL
 	ret
 
 res_b_iydp:
@@ -191,48 +374,11 @@ bit_b_r:
 	jp	srt_b_r
 
 srt_b_iydp:
-	ld	A,' '
-	call	char_out
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	pop	HL			;CB
-	inc	HL			;d
-	push	HL
-	inc	HL			;b
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	call	char_out
-	push	IX
-	pop	HL
-	call	write_str
-	pop	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	and	%00111000
-	srl	A
-	srl	A
-	srl	A
-	or	%00110000
-	call	char_out
-	call	commaspc
-	PRINT_STR reg_iyp
-	pop	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,')'
-	call	char_out
-	pop	HL
-	inc	HL
-	ret
-
+	ld	IY,reg_iyp
+	jr	srt_b_izdp
 srt_b_ixdp:
+	ld	IY,reg_ixp
+srt_b_izdp:
 	ld	A,' '
 	call	char_out
 	inc	HL
@@ -263,7 +409,9 @@ srt_b_ixdp:
 	or	%00110000
 	call	char_out
 	call	commaspc
-	PRINT_STR reg_ixp
+	push	IY
+	pop	HL
+	call	write_str
 	pop	HL
 	push	HL
 	ld	A,(HL)
@@ -415,37 +563,11 @@ rlc_r:
 	jp	ras_r
 
 ras_iydp:
-	ld	A,' '
-	call	char_out
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	pop	HL
-	inc	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	call	char_out
-	push	IX
-	pop	HL
-	call	write_str
-	PRINT_STR reg_iyp
-	pop	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,')'
-	call	char_out
-	pop	HL
-	inc	HL		; Skip last $06
-	ret
-
+	ld	IY,reg_iyp
+	jr	ras_izdp
 ras_ixdp:
+	ld	IY,reg_ixp
+ras_izdp:
 	ld	A,' '
 	call	char_out
 	inc	HL
@@ -465,7 +587,9 @@ ras_ixdp:
 	push	IX
 	pop	HL
 	call	write_str
-	PRINT_STR reg_ixp
+	push	IY
+	pop	HL
+	call	write_str
 	pop	HL
 	push	HL
 	ld	A,(HL)
@@ -582,39 +706,16 @@ id_ss:
 	ret
 
 add_iy_rr:
-	PRINT_STR op2
-	PRINT_STR wrd_add
-	PRINT_STR reg_iy
-	call	commaspc
-	pop	HL
-	push	HL
-	ld	A,(HL)
-	and	%00110000
-	cp	%00000000
-	jr	Z,.do_bc
-	cp	%00010000
-	jr	Z,.do_de
-	cp	%00100000
-	jr	Z,.do_iy
-	ld	HL,reg_sp
-	jr	.write
-.do_bc:
-	ld	HL,reg_bc
-	jr	.write
-.do_de:
-	ld	HL,reg_de
-	jr	.write
-.do_iy:
-	ld	HL,reg_iy
-.write:
-	call	write_str
-	pop	HL
-	ret
-
+	ld	IX,reg_iy
+	jr	add_iz_pp
 add_ix_pp:
+	ld	IX,reg_ix
+add_iz_pp:
 	PRINT_STR op2
 	PRINT_STR wrd_add
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	call	commaspc
 	pop	HL
 	push	HL
@@ -1140,19 +1241,11 @@ op_ldi:
 	ret
 
 ex_spp_iy:
-	PRINT_STR op2
-	PRINT_STR wrd_ex
-	ld	A,'('
-	call	char_out
-	PRINT_STR reg_sp
-	ld	A,')'
-	call	char_out
-	call	commaspc
-	PRINT_STR reg_iy
-	pop	HL
-	ret
-
+	ld	IX,reg_iy
+	jr	ex_spp_iz
 ex_spp_ix:
+	ld	IX,reg_ix
+ex_spp_iz:
 	PRINT_STR op2
 	PRINT_STR wrd_ex
 	ld	A,'('
@@ -1161,7 +1254,9 @@ ex_spp_ix:
 	ld	A,')'
 	call	char_out
 	call	commaspc
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	pop	HL
 	ret
 
@@ -1219,28 +1314,7 @@ pop_ix:
 pop_qq:
 	PRINT_STR op3
 	PRINT_STR wrd_pop
-	pop	HL
-	push	HL
-	ld	A,(HL)
-	and	%00110000
-	cp	%00000000
-	jr	Z,.do_bc
-	cp	%00010000
-	jr	Z,.do_de
-	cp	%00100000
-	jr	Z,.do_hl
-	PRINT_STR reg_af
-	jr	.end
-.do_bc:
-	PRINT_STR reg_bc
-	jr	.end
-.do_de:
-	PRINT_STR reg_de
-	jr	.end
-.do_hl:
-	PRINT_STR reg_hl
-.end:	pop	HL
-	ret
+	jp	qq_cont
 
 push_iy:
 	PRINT_STR op2
@@ -1259,6 +1333,7 @@ push_ix:
 push_qq:
 	PRINT_STR op3
 	PRINT_STR wrd_push
+qq_cont:
 	pop	HL
 	push	HL
 	ld	A,(HL)
@@ -1283,20 +1358,18 @@ push_qq:
 	ret
 
 ld_sp_iy:
-	PRINT_STR op2
-	PRINT_STR wrd_ld
-	PRINT_STR reg_sp
-	call	commaspc
-	PRINT_STR reg_iy
-	pop	HL
-	ret
-
+	ld	IX,reg_iy
+	jr	ld_sp_iz
 ld_sp_ix:
+	ld	IX,reg_ix
+ld_sp_iz:
 	PRINT_STR op2
 	PRINT_STR wrd_ld
 	PRINT_STR reg_sp
 	call	commaspc
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	pop	HL
 	ret
 
@@ -1310,46 +1383,11 @@ ld_sp_hl:
 	ret
 
 ld_nnp_iy:
-	ld	A,' '
-	call	char_out
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	pop	HL
-	push	HL
-	inc	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	call	char_out
-	PRINT_STR wrd_ld
-	ld	A,'('
-	call	char_out
-	pop	HL
-	push	HL
-	inc	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,')'
-	call	char_out
-	call	commaspc
-	PRINT_STR reg_iy
-	pop	HL
-	inc	HL
-	inc	HL
-	ret
-
+	ld	IX,reg_iy
+	jr	ld_nnp_iz
 ld_nnp_ix:
+	ld	IX,reg_ix
+ld_nnp_iz:
 	ld	A,' '
 	call	char_out
 	inc	HL
@@ -1383,7 +1421,9 @@ ld_nnp_ix:
 	ld	A,')'
 	call	char_out
 	call	commaspc
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	pop	HL
 	inc	HL
 	inc	HL
@@ -1480,42 +1520,11 @@ ld_nnp_hl:
 	ret
 
 ld_iy_nnp:
-	ld	A,' '
-	call	char_out
-	pop	HL
-	inc	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	pop	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	call	char_out
-	PRINT_STR wrd_ld
-	PRINT_STR reg_iy
-	call	commapar
-	pop	HL
-	inc	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	push	HL
-	dec	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,')'
-	call	char_out
-	pop	HL
-	ret
-
+	ld	IX,reg_iy
+	jr	ld_iz_nnp
 ld_ix_nnp:
+	ld	IX,reg_ix
+ld_iz_nnp:
 	ld	A,' '
 	call	char_out
 	pop	HL
@@ -1534,7 +1543,9 @@ ld_ix_nnp:
 	call	char_out
 	call	char_out
 	PRINT_STR wrd_ld
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	call	commapar
 	pop	HL
 	inc	HL
@@ -1638,40 +1649,11 @@ ld_hl_nnp:
 	ret
 
 ld_iy_nn:
-	ld	A,' '
-	call	char_out
-	pop	HL
-	inc	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	pop	HL
-	push	HL
-	inc	HL
-	ld	A,(HL)
-	call	hexout
-	ld	A,' '
-	call	char_out
-	call	char_out
-	PRINT_STR wrd_ld
-	PRINT_STR reg_iy
-	call	commaspc
-	pop	HL
-	inc	HL
-	push	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	push	HL
-	dec	HL
-	ld	A,(HL)
-	call	hexout
-	pop	HL
-	ret
-
+	ld	IX,reg_iy
+	jp	ld_iz_nn
 ld_ix_nn:
+	ld	IX,reg_ix
+ld_iz_nn:
 	ld	A,' '
 	call	char_out
 	pop	HL
@@ -1690,7 +1672,9 @@ ld_ix_nn:
 	call	char_out
 	call	char_out
 	PRINT_STR wrd_ld
-	PRINT_STR reg_ix
+	push	IX
+	pop	HL
+	call	write_str
 	call	commaspc
 	pop	HL
 	inc	HL
@@ -1774,26 +1758,25 @@ ld_i_a:
 	ret
 
 ld_a_r:
-	PRINT_STR op2
-	PRINT_STR wrd_ld
-	ld	A,'A'
-	call	char_out
-	call	commaspc
+	call	ld_a_start2
 	ld	A,'R'
 	call	char_out
 	pop	HL
 	ret
 
 ld_a_i:
+	call	ld_a_start2
+	ld	A,'I'
+	call	char_out
+	pop	HL
+	ret
+
+ld_a_start2:
 	PRINT_STR op2
 	PRINT_STR wrd_ld
 	ld	A,'A'
 	call	char_out
 	call	commaspc
-	ld	A,'I'
-	call	char_out
-	pop	HL
-	ret
 
 
 ld_nnp_a:
@@ -1886,23 +1869,23 @@ ld_a_nnp:
 	ret
 
 ld_a_dep:
-	PRINT_STR op3
-	PRINT_STR wrd_ld
-	ld	A,'A'
-	call	char_out
-	call	commaspc
+	call	ld_a_start3
 	PRINT_STR reg_dep
 	pop	HL
 	ret
 
 ld_a_bcp:
-	PRINT_STR op3
-	PRINT_STR wrd_ld
+	call	ld_a_start3
+	PRINT_STR reg_bcp
+	pop	HL
+	ret
+
+ld_a_start3:
+	print_str op3
+	print_str wrd_ld
 	ld	A,'A'
 	call	char_out
 	call	commaspc
-	PRINT_STR reg_bcp
-	pop	HL
 	ret
 
 ld_iydp_n:
@@ -2064,14 +2047,7 @@ ld_r_iydp:
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	pop	HL
-	ld	A,(HL)
-	and	%00111111
-	srl	A
-	srl	A
-	srl	A
-	call	reg8_to_char
-	call	char_out
-	call	commaspc
+	call	reg8_commaspc
 	push	HL
 	PRINT_STR reg_iyp
 	pop	HL
@@ -2093,14 +2069,7 @@ ld_r_ixdp:
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	pop	HL
-	ld	A,(HL)
-	and	%00111111
-	srl	A
-	srl	A
-	srl	A
-	call	reg8_to_char
-	call	char_out
-	call	commaspc
+	call	reg8_commaspc
 	push	HL
 	PRINT_STR reg_ixp
 	pop	HL
@@ -2117,14 +2086,7 @@ ld_r_hlp:
 	PRINT_STR op3
 	PRINT_STR wrd_ld
 	pop	HL
-	ld	A,(HL)
-	and	%00111111
-	srl	A
-	srl	A
-	srl	A
-	call	reg8_to_char
-	call	char_out
-	call	commaspc
+	call	reg8_commaspc
 	push	HL
 	PRINT_STR reg_hlp
 	pop	HL
@@ -2139,14 +2101,7 @@ ld_r_n:
 	PRINT_STR op2
 	PRINT_STR wrd_ld
 	pop	HL
-	ld	A,(HL)
-	and	%00111111
-	srl	A
-	srl	A
-	srl	A
-	call	reg8_to_char
-	call	char_out
-	call	commaspc
+	call	reg8_commaspc
 	inc	HL
 	push	HL
 	ld	A,(HL)
@@ -2158,6 +2113,14 @@ ld_r_r:
 	PRINT_STR op3
 	PRINT_STR wrd_ld
 	pop	HL
+	call	reg8_commaspc
+	ld	A,(HL)
+	and	%00000111
+	call	reg8_to_char
+	call	char_out
+	ret
+
+reg8_commaspc:
 	ld	A,(HL)
 	and	%00111111
 	srl	A
@@ -2166,10 +2129,6 @@ ld_r_r:
 	call	reg8_to_char
 	call	char_out
 	call	commaspc
-	ld	A,(HL)
-	and	%00000111
-	call	reg8_to_char
-	call	char_out
 	ret
 
 reg8_to_char:
@@ -2178,6 +2137,46 @@ reg8_to_char:
 	ld	IXL,A
 	add	IX,BC
 	ld	A,(IX)
+	ret
+
+cond_to_str:
+	and	%00111000
+	cp	%00000000
+	jp	NZ,.do_z
+	ld	HL,cond_nz
+	ret
+.do_z
+	cp	%00001000
+	jp	NZ,.do_nc
+	ld	HL,cond_z
+	ret
+.do_nc
+	cp	%00010000
+	jp	NZ,.do_c
+	ld	HL,cond_nc
+	ret
+.do_c
+	cp	%00011000
+	jp	NZ,.do_po
+	ld	HL,cond_c
+	ret
+.do_po
+	cp	%00100000
+	jp	NZ,.do_pe
+	ld	HL,cond_po
+	ret
+.do_pe
+	cp	%00101000
+	jp	NZ,.do_p
+	ld	HL,cond_pe
+	ret
+.do_p
+	cp	%00110000
+	jp	NZ,.do_m
+	ld	HL,cond_p
+	ret
+.do_m
+	ld	HL,cond_m
 	ret
 
 ; *****************************************************************************
@@ -2270,7 +2269,7 @@ wrd_pop		defb	"POP  ",0
 wrd_push	defb	"PUSH ",0
 wrd_res		defb	"RES  ",0
 wrd_ret		defb	"RET  ",0
-wrid_reti	defb	"RETI" ,0
+wrd_reti	defb	"RETI" ,0
 wrd_retn	defb	"RETN" ,0
 wrd_rl		defb	"RL   ",0
 wrd_rla		defb	"RLA"  ,0
@@ -2323,11 +2322,14 @@ reg_h		defb	'H'
 reg_l		defb	'L','x'
 reg_a		defb	'A'
 
-
-flg_nc		defb	"NC",0
-flg_nz		defb	"NZ",0
-flg_pe		defb	"PE",0
-flg_po		defb	"PO",0
+cond_nz		defb	"NZ",0
+cond_z		defb	"Z",0
+cond_nc		defb	"NC",0
+cond_c		defb	"C",0
+cond_po		defb	"PO",0
+cond_pe		defb	"PE",0
+cond_p		defb	"P",0
+cond_m		defb	"M",0
 
 op3:	defb	"           ",0
 op2:	defb	"        ",0
