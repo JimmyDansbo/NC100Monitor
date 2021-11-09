@@ -25,7 +25,7 @@ main:	jp	main2
 	bit 5,(iy+7)
 	bit 6,(iy+8)
 	bit 7,(iy+9)
-
+	jp	input_loop
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0
@@ -316,6 +316,7 @@ prog_name:
 	include 'nc100_ports.asm'
 	include	'kernwrap.asm'
 	include 'opcode.asm'
+	include 'op_list.asm'
 	include	'dd_list.asm'
 	include 'fd_list.asm'
 	include 'ed_list.asm'
