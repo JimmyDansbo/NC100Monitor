@@ -7,13 +7,7 @@ macro	PRINT_STR .str
 mend
 
 	org	$6000
-main:	jp	main2
-; !!!!!!! TESTING !!!!!!!!
-	ld	a,($42)
-	ld	($763),a
-	ld	DE,$1234
-; !!!!!!! TESTING !!!!!!!!
-main2:
+main:
 IF NC100==0
 	ld	A,$02
 	call	$BC0E
@@ -308,9 +302,6 @@ prog_name:
 	include 'fd_list.asm'
 	include 'ed_list.asm'
 	include 'cb_list.asm'
-
-test_word:	defw	0
-test_byte:	defb	0
 
 prog_end:
 IF NC100==0

@@ -221,7 +221,7 @@ op_list:
 	defw	in_a_np		; $DB
 	defw	call_cc_nn	; $DC
 	defw	handle_dd	; $DD
-	defw	sbc_a_hlp	; $DE
+	defw	sbc_a_n		; $DE
 	defw	rst_p		; $DF
 	defw	ret_cc		; $E0
 	defw	pop_qq		; $E1
