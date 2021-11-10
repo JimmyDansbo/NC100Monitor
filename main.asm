@@ -9,13 +9,9 @@ mend
 	org	$6000
 main:	jp	main2
 ; !!!!!!! TESTING !!!!!!!!
-	reti
-	retn
-	rst	$20
-	rst	$28
-	rst	$30
-	rst	$38
-	in	A,($33)
+	ld	a,($42)
+	ld	($763),a
+	ld	DE,$1234
 ; !!!!!!! TESTING !!!!!!!!
 main2:
 IF NC100==0
@@ -306,6 +302,7 @@ prog_name:
 	include 'nc100_ports.asm'
 	include	'kernwrap.asm'
 	include 'opcode.asm'
+	include '1word_op.asm'
 	include 'op_list.asm'
 	include	'dd_list.asm'
 	include 'fd_list.asm'

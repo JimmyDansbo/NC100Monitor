@@ -47,14 +47,14 @@ cb_list:
 	defw	sra_r		; $2D
 	defw	sra_hlp		; $2E
 	defw	sra_r		; $2F
-	defw	op_nop		; $30
-	defw	op_nop		; $31
-	defw	op_nop		; $32
-	defw	op_nop		; $33
-	defw	op_nop		; $34
-	defw	op_nop		; $35
-	defw	op_nop		; $36
-	defw	op_nop		; $37
+	defw	sll_r		; $30
+	defw	sll_r		; $31
+	defw	sll_r		; $32
+	defw	sll_r		; $33
+	defw	sll_r		; $34
+	defw	sll_r		; $35
+	defw	sll_hlp		; $36
+	defw	sll_r		; $37
 	defw	srl_r		; $38
 	defw	srl_r		; $39
 	defw	srl_r		; $3A

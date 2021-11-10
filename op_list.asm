@@ -210,7 +210,7 @@ op_list:
 	defw	ret_cc		; $D0
 	defw	pop_qq		; $D1
 	defw	jp_cc_nn	; $D2
-	defw	op_nop		; $D3
+	defw	out_np_a	; $D3
 	defw	call_cc_nn	; $D4
 	defw	push_qq		; $D5
 	defw	sub_n		; $D6
