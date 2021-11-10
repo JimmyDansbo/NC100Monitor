@@ -9,7 +9,7 @@ mend
 	org	$6000
 main:
 IF NC100==0
-	ld	A,$02
+	ld	A,$02		; Set 80 column mode
 	call	$BC0E
 ENDIF
 	call	clear_scr
@@ -40,7 +40,7 @@ input_loop:
 ; *****************************************************************************
 do_debug_dump:
 	call	char_out
-	ld	HL,0
+	sbc	hl,hl
 	call	get_addr
 .dump_op:
 	call	disp_addr		; Show current address
