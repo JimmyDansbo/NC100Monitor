@@ -7,7 +7,10 @@ macro	PRINT_STR .str
 mend
 
 	org	$6000
-main:
+main: jp main2
+	ld	a,42
+	ld	b,$42
+main2:
 IF NC100==0
 	ld	A,$02		; Set 80 column mode
 	call	$BC0E
@@ -27,6 +30,8 @@ input_loop:
 	call	Z,do_mem_dump
 	cp	'D'
 	call	Z,do_debug_dump
+	cp	'S'
+	call	Z,single_step
 
 
 	cp	'Q'
@@ -34,6 +39,106 @@ input_loop:
 	jr	input_loop
 .end:
 	call	outcrlf
+	ret
+
+; *****************************************************************************
+; *****************************************************************************
+single_step:
+	call	char_out
+	sbc	hl,hl
+	call	get_addr
+.next_op:
+	call	disp_addr
+	ld	A,' '
+	call	char_out
+	call	char_out
+	; Calculate return address
+	ld	BC,.ops_ret
+	push	BC
+
+	ld	A,(HL)
+	ld	(vcmd_space),A
+	push	HL
+	call	hexout
+	pop	HL
+	ld	A,(HL)
+	push	HL
+	jp	figure_op
+.ops_ret:
+	inc	HL
+	ld	A,'*'
+	call	char_out
+.wait:	call	wait_keyb
+	ld	A,C
+	cp	' '
+	jr	Z,.exec_op
+	cp	$0D
+	jr	Z,.exec_op
+	cp	'Q'
+	jr	NZ,.wait
+	call	do_backspace
+	call	outcrlf
+	ld	A,'.'
+	call	char_out
+	ret
+.exec_op:
+	push	HL
+	call	restore_regs
+	call	vcmd_space
+	call	save_regs
+	pop	HL
+	jr	.next_op
+
+save_regs:
+	ld	(vr_bc),BC
+	ld	(vr_de),DE
+	ld	(vr_ix),IX
+	ld	(vr_iy),IY
+	ld	(vr_hl),HL
+	push	AF
+	pop	HL
+	ld	(vr_af),HL
+	ex	AF,AF'
+	exx
+	ld	(vr_bco),BC
+	ld	(vr_deo),DE
+	ld	(vr_hlo),HL
+	push	AF
+	pop	HL
+	ld	(vr_afo),HL
+	ex	AF,AF'
+	exx
+	ret
+
+restore_regs:
+	ld	HL,(vr_deo)
+	push	HL
+	pop	DE
+	ld	HL,(vr_bco)
+	push	HL
+	pop	BC
+	ld	HL,(vr_afo)
+	push	HL
+	pop	AF
+	ld	HL,(vr_hlo)
+	ex	AF,AF'
+	exx
+	ld	HL,(vr_ix)
+	push	HL
+	pop	IX
+	ld	HL,(vr_iy)
+	push	HL
+	pop	IY
+	ld	HL,(vr_de)
+	push	HL
+	pop	DE
+	ld	HL,(vr_bc)
+	push	HL
+	pop	BC
+	ld	HL,(vr_af)
+	push	HL
+	pop	AF
+	ld	HL,(vr_hl)
 	ret
 
 ; *****************************************************************************
@@ -58,11 +163,11 @@ do_debug_dump:
 	pop	HL
 	ld	A,(HL)
 	push	HL
-	jp	figure_op		; Functions will return top ops_ret
+	jp	figure_op		; Functions will return to ops_ret
 .ops_ret:				; Because of the pushed BC above
  	inc	HL			; Be ready for next opcode
 	call	outcrlf			; Newline
-	call	wait_keyb		; Wait for the user to press a key
+.wait:	call	wait_keyb		; Wait for the user to press a key
 	ld	A,C
 	call	to_upper		; Convert to upper case
 	cp	' '			; If space or enter, dump next opcode
@@ -70,7 +175,7 @@ do_debug_dump:
 	cp	$0D
 	jr	Z,.dump_op
 	cp	'Q'			; If Q, go back to main loop
-	jr	NZ,.ops_ret		; Otherwise ignore the keypress
+	jr	NZ,.wait		; Otherwise ignore the keypress
 	ld	A,'.'
 	call	char_out
 	ret
@@ -285,6 +390,59 @@ outcrlf:
 	ld	A, 10
 	call	char_out
 	ret
+
+vr_af:
+vr_f	defb	0
+vr_a	defb	0
+vr_bc:
+vr_c	defb	0
+vr_b	defb	0
+vr_de:
+vr_e	defb	0
+vr_d	defb	0
+vr_hl:
+vr_l	defb	0
+vr_h	defb	0
+
+vr_afo:
+vr_fo	defb	0
+vr_ao	defb	0
+vr_bco:
+vr_co	defb	0
+vr_bo	defb	0
+vr_deo:
+vr_eo	defb	0
+vr_do	defb	0
+vr_hlo:
+vr_lo	defb	0
+vr_ho	defb	0
+
+vr_i	defb	0
+vr_r	defb	0
+vr_ix:
+vr_ixl	defb	0
+vr_ixh	defb	0
+vr_iy:
+vr_iyl	defb	0
+vr_iyh	defb	0
+vr_sp	defw	vstack+254
+
+vcmd_space:
+	defs	5,$C9
+vstack:
+	defs	256,$5A
+
+
+; Flag places:	7  6  5  4  3  2  1  0
+;		S  Z  x  H  x P/V N  C
+; S:	Sign
+; Z:	Zero
+; H:	Half Carry
+; P/V:	Parity/Overflow
+; N: 	Add/Subtract
+; C:	Carry
+; x:	not used
+
 
 hex_char_list:;  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
 	defb	$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$41,$42,$43,$44,$45,$46

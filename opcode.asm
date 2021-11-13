@@ -1,39 +1,36 @@
-
-handle_cb:
-	pop	HL		; Remove Address of $DD from stack
+handle_beginning:
 	inc	HL
 	call	out1hex
 	ld	A,(HL)
+	ret
+
+handle_cb:
+	pop	HL		; Remove Address of $CB from stack
+	call	handle_beginning
 	push	HL		; Save HL on stack
 	ld	BC,cb_list
-	jp	figure_op.rest
+	jr	figure_op.rest
 
 handle_dd:
 	pop	HL		; Remove Address of $DD from stack
-	inc	HL
-	call	out1hex
-	ld	A,(HL)
+	call	handle_beginning
 	push	HL		; Save HL on stack
 	ld	BC,dd_list
-	jp	figure_op.rest
+	jr	figure_op.rest
 
 handle_fd:
-	pop	HL		; Remove Address of $DD from stack
-	inc	HL
-	call	out1hex
-	ld	A,(HL)
+	pop	HL		; Remove Address of $FD from stack
+	call	handle_beginning
 	push	HL		; Save HL on stack
 	ld	BC,fd_list
-	jp	figure_op.rest
+	jr	figure_op.rest
 
 handle_ed:
 	pop	HL		; Remove Address of $ED from stack
-	inc	HL
-	call	out1hex
-	ld	A,(HL)
+	call	handle_beginning
 	push	HL		; Save HL on stack
 	ld	BC,ed_list
-	jp	figure_op.rest
+	jr	figure_op.rest
 
 figure_op:
 	ld	BC,op_list
@@ -1423,6 +1420,8 @@ ld_r_hlp: ; Testet
 
 ld_r_n: ; testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	PRINT_STR wrd_ld
