@@ -68,6 +68,8 @@ out_cp_r:;Testet
 
 out_np_a:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	PRINT_STR wrd_out
@@ -96,6 +98,8 @@ in_r_cp:;Testet
 
 in_a_np:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	PRINT_STR wrd_in
