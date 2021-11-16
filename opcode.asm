@@ -2,6 +2,7 @@ handle_beginning:
 	inc	HL
 	call	out1hex
 	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	ret
 
 handle_cb:
@@ -295,7 +296,11 @@ srt_b_ixdp:
 	ld	IY,reg_ixp
 srt_b_izdp:
 	dec	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	push	IX		; Write command
 	pop	HL
@@ -459,7 +464,11 @@ ras_ixdp:
 	ld	IY,reg_ixp
 ras_izdp:
 	dec	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	push	IX
 	pop	HL
@@ -561,6 +570,7 @@ add_iz_pp:
 	pop	HL
 	push	HL
 	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	and	%00110000
 	cp	%00000000
 	jr	Z,.do_bc
@@ -605,6 +615,7 @@ adx_hl_ss:
 	pop	HL
 	push	HL
 	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	and	%00110000
 	call	out_reg16
 	pop	HL
@@ -767,6 +778,8 @@ arl_izdp_end:
 	ret
 arl_izdp_start:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out1hex
 	PRINT_STR op1
 	push	IY
@@ -785,6 +798,8 @@ arl_hlp:;Testet
 
 arl_n:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	push	IY
@@ -860,6 +875,8 @@ ad_a_izdp_end:
 	ret
 ad_a_izdp_start:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out1hex
 	PRINT_STR op1
 	push	IY
@@ -884,6 +901,8 @@ ad_a_hlp:;Testet
 
 ad_a_n:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	push	IY
@@ -1062,7 +1081,11 @@ ld_nnp_ix:
 	ld	IX,reg_ix
 ld_nnp_iz:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	PRINT_STR wrd_ld
 	ld	A,'('
@@ -1083,7 +1106,11 @@ ld_nnp_iz:
 
 ld_nnp_dd:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	PRINT_STR wrd_ld
 	ld	A,'('
@@ -1105,7 +1132,11 @@ ld_nnp_dd:;Testet
 
 ld_nnp_hl:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	ld	A,'('
@@ -1129,7 +1160,11 @@ ld_ix_nnp:
 	ld	IX,reg_ix
 ld_iz_nnp:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	PRINT_STR wrd_ld
 	push	IX
@@ -1146,7 +1181,11 @@ ld_iz_nnp:
 
 ld_dd_nnp:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	PRINT_STR wrd_ld
 	pop	HL
@@ -1166,7 +1205,11 @@ ld_dd_nnp:;Testet
 
 ld_hl_nnp:; Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	PRINT_STR reg_hl
@@ -1186,7 +1229,11 @@ ld_ix_nn:
 	ld	IX,reg_ix
 ld_iz_nn:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	PRINT_STR wrd_ld
 	push	IX
@@ -1201,7 +1248,11 @@ ld_iz_nn:
 
 ld_dd_nn:;Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	pop	HL
@@ -1240,7 +1291,11 @@ ld_ai:
 
 ld_nnp_a:; testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	ld	A,'('
@@ -1275,7 +1330,11 @@ ld_bdp_a:
 
 ld_a_nnp:;testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	PRINT_STR op1
 	PRINT_STR wrd_ld
 	ld	A,'A'
@@ -1316,7 +1375,11 @@ ld_ixdp_n:
 	ld	IY,reg_ixp
 ld_izdp_n:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out2hex
+	ld	A,(HL)
+	ld	(vcmd_space+3),A
 	PRINT_STR op0
 	pop	HL
 	inc	HL
@@ -1336,6 +1399,8 @@ ld_izdp_n:
 
 ld_hlp_n:; Testet
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+1),A
 	call	out1hex
 	PRINT_STR op2
 	PRINT_STR wrd_ld
@@ -1353,6 +1418,8 @@ ld_ixdp_r:
 	ld	IY,reg_ixp
 ld_izdp_r:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out1hex
 	PRINT_STR op1
 	PRINT_STR wrd_ld
@@ -1392,6 +1459,8 @@ ld_r_ixdp:
 	ld	IY,reg_ixp
 ld_r_izdp:
 	inc	HL
+	ld	A,(HL)
+	ld	(vcmd_space+2),A
 	call	out1hex
 	PRINT_STR op1
 	PRINT_STR wrd_ld

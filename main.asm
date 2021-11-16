@@ -10,7 +10,22 @@ mend
 main: jp main2
 	ld	a,42
 	ld	b,$42
+	ld	c,$54
+	ld	d,$67
+	ld	e,$12
+	ld	h,$54
+	ld	l,$23
+	ld	(ix+$42),$42
 main2:
+	ld	HL,0		; Save current SP in rr_sp variable
+	add	HL,SP
+	ld	(rr_sp),HL
+	ld	HL,(vr_sp)	; Set SP to point into 256 byte area
+	ld	SP,HL		; This used as NCCmon's stack
+	call	save_vregs
+	ex	AF,AF'
+	exx
+
 IF NC100==0
 	ld	A,$02		; Set 80 column mode
 	call	$BC0E
@@ -39,6 +54,8 @@ input_loop:
 	jr	input_loop
 .end:
 	call	outcrlf
+	ld	HL,(rr_sp)
+	ld	SP,HL
 	ret
 
 ; *****************************************************************************
@@ -56,6 +73,7 @@ single_step:
 	ld	BC,.ops_ret
 	push	BC
 
+	call	clear_vcmd
 	ld	A,(HL)
 	ld	(vcmd_space),A
 	push	HL
@@ -66,38 +84,152 @@ single_step:
 	jp	figure_op
 .ops_ret:
 	inc	HL
-	ld	A,'*'
-	call	char_out
+	push	HL
+	call	out_vregs
 .wait:	call	wait_keyb
 	ld	A,C
+	call	to_upper
 	cp	' '
 	jr	Z,.exec_op
 	cp	$0D
 	jr	Z,.exec_op
 	cp	'Q'
 	jr	NZ,.wait
-	call	do_backspace
 	call	outcrlf
 	ld	A,'.'
 	call	char_out
 	ret
 .exec_op:
-	push	HL
-	call	restore_regs
-	call	vcmd_space
-	call	save_regs
+	call	outcrlf
 	pop	HL
+	call	save_rregs
+	call	restore_vregs
+	call	vcmd_start
+	call	save_vregs
+	call	restore_rregs
 	jr	.next_op
 
-save_regs:
+out_vregs:
+	call get_xy
+	ld	H,39
+	call goto_xy
+	ld	A,'A'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_a)
+	call	hexout
+	ld	A,(vr_f)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	ld	A,'B'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_b)
+	call	hexout
+	ld	A,(vr_c)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	ld	A,'D'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_d)
+	call	hexout
+	ld	A,(vr_e)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	ld	A,'H'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_h)
+	call	hexout
+	ld	A,(vr_l)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	ld	A,'X'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_ixh)
+	call	hexout
+	ld	A,(vr_ixl)
+	call	hexout
+	ld	A,' '
+	call	char_out
+	ld	A,'Y'
+	call	char_out
+	ld	A,':'
+	call	char_out
+	ld	A,(vr_iyh)
+	call	hexout
+	ld	A,(vr_iyl)
+	call	hexout
+	ret
+
+
+clear_vcmd:
+	ld	A,$00
+	ld	(vcmd_space+1),A
+	ld	(vcmd_space+2),A
+	ld	(vcmd_space+3),A
+	ret
+
+save_rregs:
+	ld	(rr_bc),BC
+	ld	(rr_de),DE
+	ld	(rr_hl),HL
+	push	AF
+	pop	HL
+	ld	(rr_af),HL
+	ld	(rr_iy),IY
+	ld	(rr_ix),IX
+
+	ex	AF,AF'
+	exx
+	ld	(rr_bco),BC
+	ld	(rr_deo),DE
+	ld	(rr_hlo),HL
+	push	AF
+	pop	HL
+	ld	(rr_afo),HL
+	ret
+
+restore_rregs:
+	ld	HL,(rr_afo)
+	push	HL
+	pop	AF
+	ld	HL,(rr_hlo)
+	ld	BC,(rr_bco)
+	ld	DE,(rr_deo)
+	ex	AF,AF'
+	exx
+	ld	HL,(rr_af)
+	push	HL
+	pop	AF
+	ld	HL,(rr_hl)
+	ld	BC,(rr_bc)
+	ld	DE,(rr_de)
+	ld	IX,(rr_ix)
+	ld	IY,(rr_iy)
+	ret
+
+save_vregs:
 	ld	(vr_bc),BC
 	ld	(vr_de),DE
-	ld	(vr_ix),IX
-	ld	(vr_iy),IY
 	ld	(vr_hl),HL
 	push	AF
 	pop	HL
 	ld	(vr_af),HL
+	ld	(vr_iy),IY
+	ld	(vr_ix),IX
+
 	ex	AF,AF'
 	exx
 	ld	(vr_bco),BC
@@ -106,39 +238,25 @@ save_regs:
 	push	AF
 	pop	HL
 	ld	(vr_afo),HL
-	ex	AF,AF'
-	exx
 	ret
 
-restore_regs:
-	ld	HL,(vr_deo)
-	push	HL
-	pop	DE
-	ld	HL,(vr_bco)
-	push	HL
-	pop	BC
+restore_vregs:
 	ld	HL,(vr_afo)
 	push	HL
 	pop	AF
 	ld	HL,(vr_hlo)
+	ld	BC,(vr_bco)
+	ld	DE,(vr_deo)
 	ex	AF,AF'
 	exx
-	ld	HL,(vr_ix)
-	push	HL
-	pop	IX
-	ld	HL,(vr_iy)
-	push	HL
-	pop	IY
-	ld	HL,(vr_de)
-	push	HL
-	pop	DE
-	ld	HL,(vr_bc)
-	push	HL
-	pop	BC
 	ld	HL,(vr_af)
 	push	HL
 	pop	AF
 	ld	HL,(vr_hl)
+	ld	BC,(vr_bc)
+	ld	DE,(vr_de)
+	ld	IX,(vr_ix)
+	ld	IY,(vr_iy)
 	ret
 
 ; *****************************************************************************
@@ -391,6 +509,57 @@ outcrlf:
 	call	char_out
 	ret
 
+vcmd_start:
+	ld	HL,0			; Move SP to HL
+	add	HL,SP
+	ld	(vr_sp),HL		; Save SP to "virtual" stack
+	ld	HL,(rr_sp)		; Set the "real" stackpointer
+	ld	SP,HL
+	ld	HL,(vr_hl)		; Restore HL
+vcmd_space:
+	defs	4,$00			; Actual op being executed
+vmd_end:
+	ld	(vr_hl),HL		; Save HL
+	ld	HL,0			; Move SP to HL
+	add	HL,SP
+	ld	(rr_sp),HL		; Save SP to "real" stack
+	ld	HL,(vr_sp)		; Set the "virtual" stackpointer
+	ld	SP,HL
+	ld	HL,(vr_hl)		; Restore HL
+	ret
+
+rr_af:
+rr_f	defb	0
+rr_a	defb	0
+rr_bc:
+rr_c	defb	0
+rr_b	defb	0
+rr_de:
+rr_e	defb	0
+rr_d	defb	0
+rr_hl:
+rr_l	defb	0
+rr_h	defb	0
+rr_ix:
+rr_ixl	defb	0
+rr_ixh	defb	0
+rr_iy:
+rr_iyl	defb	0
+rr_iyh	defb	0
+
+rr_afo:
+rr_fo	defb	0
+rr_ao	defb	0
+rr_bco:
+rr_co	defb	0
+rr_bo	defb	0
+rr_deo:
+rr_eo	defb	0
+rr_do	defb	0
+rr_hlo:
+rr_lo	defb	0
+rr_ho	defb	0
+
 vr_af:
 vr_f	defb	0
 vr_a	defb	0
@@ -403,6 +572,12 @@ vr_d	defb	0
 vr_hl:
 vr_l	defb	0
 vr_h	defb	0
+vr_ix:
+vr_ixl	defb	0
+vr_ixh	defb	0
+vr_iy:
+vr_iyl	defb	0
+vr_iyh	defb	0
 
 vr_afo:
 vr_fo	defb	0
@@ -417,21 +592,14 @@ vr_hlo:
 vr_lo	defb	0
 vr_ho	defb	0
 
-vr_i	defb	0
-vr_r	defb	0
-vr_ix:
-vr_ixl	defb	0
-vr_ixh	defb	0
-vr_iy:
-vr_iyl	defb	0
-vr_iyh	defb	0
-vr_sp	defw	vstack+254
+vr_sp	defw	vstack_end
+rr_sp	defw	0
 
-vcmd_space:
-	defs	5,$C9
+tmp_hl	defw	0
+
 vstack:
 	defs	256,$5A
-
+vstack_end:
 
 ; Flag places:	7  6  5  4  3  2  1  0
 ;		S  Z  x  H  x P/V N  C
