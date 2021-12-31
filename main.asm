@@ -8,14 +8,11 @@ mend
 
 	org	$6000
 main: jp main2
-	ld	a,42
-	ld	b,$42
-	ld	c,$54
-	ld	d,$67
-	ld	e,$12
-	ld	h,$54
-	ld	l,$23
-	ld	(ix+$42),$42
+.buf	defs	16,$FE
+	ld	HL,hex_char_list
+	ld	DE,.buf
+	ld	BC,16
+	ldir
 main2:
 	ld	HL,0		; Save current SP in rr_sp variable
 	add	HL,SP
@@ -47,8 +44,16 @@ input_loop:
 	call	Z,do_debug_dump
 	cp	'S'
 	call	Z,single_step
-
-
+	cp	'R'
+	jr	NZ,.skip
+	ld	A,' '
+	call	char_out
+	call	out_vregs.nomov
+	call	outcrlf
+	ld	A,'.'
+	call	char_out
+	jr	input_loop
+.skip:
 	cp	'Q'
 	jr	z,.end
 	jr	input_loop
@@ -74,7 +79,7 @@ single_step:
 	push	BC
 
 	call	clear_vcmd
-	ld	A,(HL)
+	ld	A,(HL)			; Write byte of opcode to vcmd_space
 	ld	(vcmd_space),A
 	push	HL
 	call	hexout
@@ -98,6 +103,7 @@ single_step:
 	call	outcrlf
 	ld	A,'.'
 	call	char_out
+	pop	HL
 	ret
 .exec_op:
 	call	outcrlf
@@ -113,7 +119,7 @@ out_vregs:
 	call get_xy
 	ld	H,39
 	call goto_xy
-	ld	A,'A'
+.nomov:	ld	A,'A'
 	call	char_out
 	ld	A,':'
 	call	char_out
